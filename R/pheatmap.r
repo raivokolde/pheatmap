@@ -111,6 +111,10 @@ draw_matrix = function(matrix, border_color){
 	m = ncol(matrix)
 	x = (1:m)/m - 1/2/m
 	y = (1:n)/n - 1/2/n
+	ms = min(convertWidth(unit(0:1, "npc"), "bigpts", valueOnly = T)[2] / m, convertHeight(unit(0:1, "npc"), "bigpts", valueOnly = T)[2] / n) 
+	if(ms < 5){
+		border_color = NA
+	}
 	for(i in 1:m){
 		grid.rect(x = x[i], y = y[1:n], width = 1/m, height = 1/n, gp = gpar(fill = matrix[,i], col = border_color))
 	}
@@ -286,9 +290,8 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 			stop("File type should be: pdf, png, bmp, jpg, tiff")
 		)
 		
-		
+		# print(sprintf("height:%f width:%f", height, width))
 		f(filename, height = height, width = width)
-		# pdf(filename, width = 3.38, height = 3.38)
 		heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, ...)
 		dev.off()
 	}
@@ -311,21 +314,28 @@ cluster_mat = function(mat, distance, method){
 	if(!(method %in% c("ward", "single", "complete", "average", "mcquitty", "median", "centroid"))){
 		stop("clustering method has to one form the list: 'ward', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
 	}
-	if(!(distance %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))){
-		stop("distance measure has to one form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
+	if(!(distance[1] %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) & class(distance) != "dist"){
+		print(!(distance[1] %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) | class(distance) != "dist")
+		stop("distance has to be a dissimilarity structure as produced by dist or one measure  form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
 	}
-	if(distance == "correlation"){
+	if(distance[1] == "correlation"){
 		d = dist(1 - cor(t(mat)))
 	}
 	else{
-		d = dist(mat, method = distance)
+		if(class(distance) == "dist"){
+			d = distance
+		}
+		else{
+			d = dist(mat, method = distance)
+		}
 	}
+	
 	return(hclust(d, method = method))
 }
 
 scale_rows = function(x){
-	m = apply(x, 1, mean)
-	s = apply(x, 1, sd)
+	m = apply(x, 1, mean, na.rm = T)
+	s = apply(x, 1, sd, na.rm = T)
 	return((x - m) / s)
 }
 
@@ -396,9 +406,12 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #' \code{"row"}, \code{"column"} and \code{"none"}
 #' @param cluster_rows boolean values determining if rows should be clustered,
 #' @param cluster_cols boolean values determining if columns should be clustered.
-#' @param clustering_distance distance measure used in clustering. Possible values are 
-#' \code{"correlation"} and all the distances supported by \code{\link{dist}}, such as 
-#' \code{"euclidean"}, etc. 
+#' @param clustering_distance_rows distance measure used in clustering rows. Possible 
+#' values are \code{"correlation"} and all the distances supported by \code{\link{dist}}, 
+#' such as \code{"euclidean"}, etc. If the value is none of the above it is assumed that 
+#' a distance matrix is provided.
+#' @param clustering_distance_cols distance measure used in clustering columns. Possible 
+#' values the same as for clustering_distance_rows.
 #' @param clustering_method clustering method used. Accepts the same values as 
 #' \code{\link{hclust}}.
 #' @param treeheight_row the height of a tree for rows, if these are clustered. 
@@ -437,7 +450,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #'
 #'	# Draw heatmaps
 #'	pheatmap(test)
-#'	pheatmap(test, scale = "row", clustering_distance = "correlation")
+#'	pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
 #'	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 #'	pheatmap(test, cluster_row = FALSE)
 #'	pheatmap(test, legend = FALSE)
@@ -462,8 +475,13 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #'
 #'	pheatmap(test, annotation = annotation, annotation_colors = ann_colors)
 #' 
+#'	# Specifying clustering from distance matrix
+#'	drows = dist(test, method = "minkowski")
+#'	dcols = dist(t(test), method = "minkowski")
+#'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
+#' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
@@ -471,7 +489,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	
 	# Do clustering
 	if(cluster_rows){
-		tree_row = cluster_mat(mat, distance = clustering_distance, method = clustering_method)
+		tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
 		mat = mat[tree_row$order, ]
 	}
 	else{
@@ -480,7 +498,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	}
 	
 	if(cluster_cols){
-		tree_col = cluster_mat(t(mat), distance = clustering_distance, method = clustering_method)
+		tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
 		mat = mat[, tree_col$order]
 	}
 	else{

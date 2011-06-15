@@ -8,7 +8,7 @@ roxygenize(package.dir = "Source", roxygen.dir = "pheatmap", unlink.target = T, 
 cd ~/Raivo/Projects/RHeatmap/
 R CMD check pheatmap
 R CMD build pheatmap
-R CMD install pheatmap_0.4.tar.gz 
+R CMD install pheatmap_0.5.tar.gz 
 
 
 # Debug, kui kisab et dokument sisaldab mitte ascii tähti
