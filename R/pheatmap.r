@@ -188,7 +188,7 @@ draw_annotation_legend = function(annotation, annotation_colors, border_color, .
 	for(i in names(annotation_colors)){
 		grid.text(i, x = 0, y = y, vjust = 1, hjust = 0, gp = gpar(fontface = "bold", ...))
 		y = y - 1.5 * text_height
-		if(class(annotation[, i]) %in% c("character", "factor")){
+		if(is.character(annotation[, i]) | is.factor(annotation[, i])){
 			for(j in 1:length(annotation_colors[[i]])){
 				grid.rect(x = unit(0, "npc"), y = y, hjust = 0, vjust = 1, height = text_height, width = text_height, gp = gpar(col = border_color, fill = annotation_colors[[i]][j]))
 				grid.text(names(annotation_colors[[i]])[j], x = text_height * 1.3, y = y, hjust = 0, vjust = 1, gp = gpar(...))
@@ -367,7 +367,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 	}
 	count = 0
 	for(i in 1:ncol(annotation)){
-		if(class(annotation[, i]) %in% c("character", "factor")){
+		if(is.character(annotation[, i]) | is.factor(annotation[, i])){
 			count = count + length(unique(annotation[, i]))
 		}
 	}
@@ -379,7 +379,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 	
 	for(i in 1:ncol(annotation)){
 		if(!(colnames(annotation)[i] %in% names(annotation_colors))){
-			if(class(annotation[, i]) %in% c("character", "factor")){
+			if(is.character(annotation[, i]) | is.factor(annotation[, i])){
 				ind = sample(1:length(factor_colors), length(unique(annotation[, i])))
 				annotation_colors[[colnames(annotation)[i]]] = factor_colors[ind]
 				l = levels(as.factor(annotation[, i]))
