@@ -157,7 +157,7 @@ convert_annotations = function(annotation, annotation_colors){
 	for(i in 1:ncol(annotation)){
 		a = annotation[, i]
 		b = annotation_colors[[colnames(annotation)[i]]]
-		if(class(a) %in% c("character", "factor")){
+		if(is.character(a) | is.factor(a)){
 			a = as.character(a)
 			if(length(setdiff(names(b), a)) > 0){
 				stop(sprintf("Factor levels on variable %s do not match with annotation_colors", colnames(annotation)[i]))
