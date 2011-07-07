@@ -1,4 +1,4 @@
-lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation, annotation_colors, annotation_legend, fontsize, fontsize_row, fontsize_col, ...){
+lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, ...){
 	# Get height of colnames and length of rownames
 	if(!is.null(coln[1])){
 		longest_coln = which.max(nchar(coln))
@@ -31,6 +31,14 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
 		legend_width = unit(0, "bigpts")
 	}
 	
+	# Set main title height
+	if(is.na(main)){
+		main_height = unit(0, "npc")
+	}
+	else{
+		main_height = unit(1.5, "grobheight", textGrob(main, gp = gpar(fontsize = 1.3 * fontsize, ...)))
+	}
+	
 	# Column annotations
 	if(!is.na(annotation[[1]][1])){
 		# Column annotation height 
@@ -60,19 +68,20 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
 	}
 	
 	if(is.na(cellheight)){
-		matheight = unit(1, "npc") - coln_height - treeheight_col - annot_height
+		matheight = unit(1, "npc") - main_height - coln_height - treeheight_col - annot_height
 	}
 	else{
 		matheight = unit(cellheight * nrow, "bigpts")
 	}	
 	
+	
 	# Produce layout()
-	pushViewport(viewport(layout = grid.layout(nrow = 4, ncol = 5, widths = unit.c(treeheight_row, matwidth, rown_width, legend_width, annot_legend_width), heights = unit.c(treeheight_col, annot_height, matheight, coln_height))))
+	pushViewport(viewport(layout = grid.layout(nrow = 5, ncol = 5, widths = unit.c(treeheight_row, matwidth, rown_width, legend_width, annot_legend_width), heights = unit.c(main_height, treeheight_col, annot_height, matheight, coln_height)), gp = do.call(gpar, gp)))
 	
 	# Get cell dimensions
-	pushViewport(vplayout(3, 2))
+	pushViewport(vplayout(4, 2))
 	cellwidth = convertWidth(unit(0:1, "npc"), "bigpts", valueOnly = T)[2] / ncol
-	cellheight = convertHeight(unit(0:1, "npc"), "bigpts", valueOnly = T)[2] / ncol
+	cellheight = convertHeight(unit(0:1, "npc"), "bigpts", valueOnly = T)[2] / nrow
 	upViewport()
 	
 	# Return minimal cell dimension in bigpts to decide if borders are drawn
@@ -208,42 +217,52 @@ draw_annotation_legend = function(annotation, annotation_colors, border_color, .
 	}
 }
 
+draw_main = function(text, ...){
+	grid.text(text, gp = gpar(fontface = "bold", ...))
+}
 
 vplayout = function(x, y){
 	return(viewport(layout.pos.row = x, layout.pos.col = y))
 }
 
-heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation, annotation_colors, annotation_legend, fontsize, fontsize_row, fontsize_col, ...){
+heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, ...){
 	grid.newpage()
 	
 	# Set layout
-	mindim = lo(coln = colnames(matrix), rown = rownames(matrix), nrow = nrow(matrix), ncol = ncol(matrix), cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col,  ...)
+	mindim = lo(coln = colnames(matrix), rown = rownames(matrix), nrow = nrow(matrix), ncol = ncol(matrix), cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col,  ...)
 	
 	# Omit border color if cell size is too small 
 	if(mindim < 3) border_color = NA
 	
+	# Draw title
+	if(!is.na(main)){
+		pushViewport(vplayout(1, 2))
+		draw_main(main, fontsize = 1.3 * fontsize, ...)
+		upViewport()
+	}
+	
 	# Draw tree for the columns
 	if(!is.na(tree_col[[1]][1]) & treeheight_col != 0){
-		pushViewport(vplayout(1, 2))
+		pushViewport(vplayout(2, 2))
 		draw_dendrogram(tree_col, horizontal = T)
 		upViewport()
 	}
 	
 	# Draw tree for the rows
 	if(!is.na(tree_row[[1]][1]) & treeheight_row != 0){
-		pushViewport(vplayout(3, 1))
+		pushViewport(vplayout(4, 1))
 		draw_dendrogram(tree_row, horizontal = F)
 		upViewport()
 	}
 	
 	# Draw matrix
-	pushViewport(vplayout(3, 2))
+	pushViewport(vplayout(4, 2))
 	draw_matrix(matrix, border_color)
 	upViewport()
 	
 	# Draw colnames
 	if(length(colnames(matrix)) != 0){
-		pushViewport(vplayout(4, 2))
+		pushViewport(vplayout(5, 2))
 		pars = list(colnames(matrix), fontsize = fontsize_col, ...)
 		do.call(draw_colnames, pars)
 		upViewport()
@@ -251,7 +270,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 	# Draw rownames
 	if(length(rownames(matrix)) != 0){
-		pushViewport(vplayout(3, 3))
+		pushViewport(vplayout(4, 3))
 		pars = list(rownames(matrix), fontsize = fontsize_row, ...)
 		do.call(draw_rownames, pars)
 		upViewport()
@@ -259,7 +278,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 	# Draw annotation tracks
 	if(!is.na(annotation[[1]][1])){
-		pushViewport(vplayout(2, 2))
+		pushViewport(vplayout(3, 2))
 		converted_annotation = convert_annotations(annotation, annotation_colors)
 		draw_annotations(converted_annotation, border_color)
 		upViewport()
@@ -267,14 +286,14 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 	# Draw annotation legend
 	if(!is.na(annotation[[1]][1]) & annotation_legend){
-		pushViewport(vplayout(3, 5))
+		pushViewport(vplayout(4, 5))
 		draw_annotation_legend(annotation, annotation_colors, border_color, fontsize = fontsize, ...)
 		upViewport()
 	}
 	
 	# Draw legend
 	if(!is.na(legend[1])){
-		pushViewport(vplayout(3, 4))
+		pushViewport(vplayout(4, 4))
 		draw_legend(color, breaks, legend, fontsize = fontsize, ...)
 		upViewport()
 	}
@@ -306,7 +325,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 		
 		# print(sprintf("height:%f width:%f", height, width))
 		f(filename, height = height, width = width)
-		heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
+		heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
 		dev.off()
 	}
 }
@@ -444,6 +463,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #' should be drawn. 
 #' @param show_rownames boolean specifying if column names are be shown.
 #' @param show_colnames boolean specifying if column names are be shown.
+#' @param main the title of the plot
 #' @param fontsize base fontsize for the plot 
 #' @param fontsize_row fontsize for rownames (Default: fontsize) 
 #' @param fontsize_col fontsize for colnames (Default: fontsize) 
@@ -470,7 +490,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #'	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 #'	pheatmap(test, cluster_row = FALSE)
 #'	pheatmap(test, legend = FALSE)
-#'	pheatmap(test, cellwidth = 15, cellheight = 12)
+#'	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #'
 #'
@@ -489,7 +509,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #'
 #'	ann_colors = list(Var1 = Var1, Var2 = Var2)
 #'
-#'	pheatmap(test, annotation = annotation, annotation_colors = ann_colors)
+#'	pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
 #' 
 #'	# Specifying clustering from distance matrix
 #'	drows = dist(test, method = "minkowski")
@@ -497,7 +517,7 @@ generate_annotation_colours = function(annotation, annotation_colors){
 #'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
@@ -549,7 +569,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	}
 	
 	# Draw heatmap
-	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
+	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
 }
 
 #' Pretty heatmaps
