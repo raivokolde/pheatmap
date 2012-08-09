@@ -428,6 +428,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 	}
 	
 	# Cluster data
+	set.seed(1245678)
 	km = kmeans(mat, k, iter.max = 100)
 	mat2 = km$centers
 	
@@ -570,6 +571,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	else{
 		tree_row = NA
 		treeheight_row = 0
+		mat = mat[nrow(mat):1, ]
 	}
 	
 	if(cluster_cols){
@@ -611,17 +613,4 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
 }
 
-#' Pretty heatmaps
-#' 
-#'  The package for drawing pretty heatmaps in R. The ordinary heatmap function in R has 
-#' several drawbacks, when it comes to producing publication quality heatmaps. It is hard 
-#' to produce pictures with consistent text, cell and overall sizes. The function 
-#' pheatmap tries to alleviate the problems by offering more fine grained control over 
-#' heatmap dimensions and appearance.
-#' 
-#' @name pheatmap-package
-#' @docType package
-#' 
-#' @import grid
-#' 
-NA
+
