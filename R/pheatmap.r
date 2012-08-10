@@ -128,13 +128,14 @@ draw_dendrogram = function(hc, horizontal = T){
 	}
 }
 
-draw_matrix = function(matrix, border_color){
+draw_matrix = function(matrix, border_color, fmat, fontsize_number){
 	n = nrow(matrix)
 	m = ncol(matrix)
 	x = (1:m)/m - 1/2/m
 	y = (1:n)/n - 1/2/n
 	for(i in 1:m){
 		grid.rect(x = x[i], y = y[1:n], width = 1/m, height = 1/n, gp = gpar(fill = matrix[,i], col = border_color))
+		grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "grey30", fontsize = fontsize_number))
 	}
 }
 
@@ -225,7 +226,7 @@ vplayout = function(x, y){
 	return(viewport(layout.pos.row = x, layout.pos.col = y))
 }
 
-heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, ...){
+heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, fmat, fontsize_number, ...){
 	grid.newpage()
 	
 	# Set layout
@@ -258,7 +259,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 		
 		# print(sprintf("height:%f width:%f", height, width))
 		f(filename, height = height, width = width)
-		heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
+		heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number =  fontsize_number, ...)
 		dev.off()
 		upViewport()
 		return()
@@ -290,7 +291,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 	# Draw matrix
 	pushViewport(vplayout(4, 2))
-	draw_matrix(matrix, border_color)
+	draw_matrix(matrix, border_color, fmat, fontsize_number)
 	upViewport()
 	
 	# Draw colnames
@@ -495,6 +496,12 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' @param fontsize base fontsize for the plot 
 #' @param fontsize_row fontsize for rownames (Default: fontsize) 
 #' @param fontsize_col fontsize for colnames (Default: fontsize) 
+#' @param display_numbers logical determining if the numeric values are also printed to 
+#' the cells. 
+#' @param number_format format strings (C printf style) of the numbers shown in cells. 
+#' For example "\code{%.2f}" shows 2 decimal places and "\code{%.1e}" shows exponential 
+#' notation (see more in \code{\link{sprintf}}).    
+#' @param fontsize_number fontsize of the numbers displayed in cells
 #' @param filename file path where to save the picture. Filetype is decided by 
 #' the extension in the path. Currently following formats are supported: png, pdf, tiff,
 #'  bmp, jpeg. Even if the plot does not fit into the plotting window, the file size is 
@@ -519,6 +526,8 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 #'	pheatmap(test, cluster_row = FALSE)
 #'	pheatmap(test, legend = FALSE)
+#'  pheatmap(test, display_numbers = TRUE)
+#'  pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #'
@@ -546,7 +555,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
@@ -583,6 +592,15 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 		treeheight_col = 0
 	}
 	
+	# Format numbers to be displayed in cells 
+	if(display_numbers){
+		fmat = matrix(sprintf(number_format, mat), nrow = nrow(mat), ncol = ncol(mat))
+	}
+	else{
+		fmat = NA
+	}
+	
+	
 	# Colors and scales
 	if(is.na(breaks[1])){
       breaks = generate_breaks(as.vector(mat), length(color))
@@ -610,7 +628,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	}
 	
 	# Draw heatmap
-	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, ...)
+	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number = fontsize_number, ...)
 }
 
 
