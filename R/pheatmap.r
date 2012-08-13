@@ -135,7 +135,9 @@ draw_matrix = function(matrix, border_color, fmat, fontsize_number){
 	y = (1:n)/n - 1/2/n
 	for(i in 1:m){
 		grid.rect(x = x[i], y = y[1:n], width = 1/m, height = 1/n, gp = gpar(fill = matrix[,i], col = border_color))
-		grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "grey30", fontsize = fontsize_number))
+		if(attr(fmat, "draw")){
+			grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "grey30", fontsize = fontsize_number))
+		}
 	}
 }
 
@@ -169,7 +171,7 @@ convert_annotations = function(annotation, annotation_colors){
 		b = annotation_colors[[colnames(annotation)[i]]]
 		if(is.character(a) | is.factor(a)){
 			a = as.character(a)
-			if(length(setdiff(names(b), a)) > 0){
+			if(length(setdiff(a, names(b))) > 0){
 				stop(sprintf("Factor levels on variable %s do not match with annotation_colors", colnames(annotation)[i]))
 			}
 			new[, i] = b[a]
@@ -385,13 +387,16 @@ scale_mat = function(mat, scale){
 	return(mat)
 }
 
-generate_annotation_colours = function(annotation, annotation_colors){
+generate_annotation_colours = function(annotation, annotation_colors, drop){
 	if(is.na(annotation_colors)[[1]][1]){
 		annotation_colors = list()
 	}
 	count = 0
 	for(i in 1:ncol(annotation)){
 		if(is.character(annotation[, i]) | is.factor(annotation[, i])){
+			if (is.factor(annotation[, i]) & !drop){
+				count = count + length(levels(annotation[, i]))
+			}
 			count = count + length(unique(annotation[, i]))
 		}
 	}
@@ -404,17 +409,23 @@ generate_annotation_colours = function(annotation, annotation_colors){
 	for(i in 1:ncol(annotation)){
 		if(!(colnames(annotation)[i] %in% names(annotation_colors))){
 			if(is.character(annotation[, i]) | is.factor(annotation[, i])){
-				ind = sample(1:length(factor_colors), length(unique(annotation[, i])))
+				n = length(unique(annotation[, i]))
+				if (is.factor(annotation[, i]) & !drop){
+					n = length(levels(annotation[, i]))
+				}
+				ind = sample(1:length(factor_colors), n)
 				annotation_colors[[colnames(annotation)[i]]] = factor_colors[ind]
 				l = levels(as.factor(annotation[, i]))
 				l = l[l %in% unique(annotation[, i])]
+				if (is.factor(annotation[, i]) & !drop){
+					l = levels(annotation[, i])
+				}
 				names(annotation_colors[[colnames(annotation)[i]]]) = l
 				factor_colors = factor_colors[-ind]
 			}
 			else{
 				r = runif(1)
-				annotation_colors[[colnames(annotation)[i]]] = hsv(r, 
-          c(0.1, 1), 1)
+				annotation_colors[[colnames(annotation)[i]]] = hsv(r, c(0.1, 1), 1)
 			}
 		}
 	}
@@ -490,6 +501,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' details.
 #' @param annotation_legend boolean value showing if the legend for annotation tracks 
 #' should be drawn. 
+#' @param drop_levels logical to determine if unused levels are also shown in the legend
 #' @param show_rownames boolean specifying if column names are be shown.
 #' @param show_colnames boolean specifying if column names are be shown.
 #' @param main the title of the plot
@@ -499,7 +511,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' @param display_numbers logical determining if the numeric values are also printed to 
 #' the cells. 
 #' @param number_format format strings (C printf style) of the numbers shown in cells. 
-#' For example "\code{%.2f}" shows 2 decimal places and "\code{%.1e}" shows exponential 
+#' For example "\code{\%.2f}" shows 2 decimal places and "\code{\%.1e}" shows exponential 
 #' notation (see more in \code{\link{sprintf}}).    
 #' @param fontsize_number fontsize of the numbers displayed in cells
 #' @param filename file path where to save the picture. Filetype is decided by 
@@ -534,10 +546,12 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'
 #'	# Generate column annotations
 #'	annotation = data.frame(Var1 = factor(1:10 \%\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
+#'  annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 #'	rownames(annotation) = paste("Test", 1:10, sep = "")
 #'
 #'	pheatmap(test, annotation = annotation)
 #'	pheatmap(test, annotation = annotation, annotation_legend = FALSE)
+#'	pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
 #'
 #'
 #'	# Specify colors
@@ -555,7 +569,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
@@ -595,9 +609,11 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	# Format numbers to be displayed in cells 
 	if(display_numbers){
 		fmat = matrix(sprintf(number_format, mat), nrow = nrow(mat), ncol = ncol(mat))
+		attr(fmat, "draw") = TRUE
 	}
 	else{
-		fmat = NA
+		fmat = matrix(NA, nrow = nrow(mat), ncol = ncol(mat))
+		attr(fmat, "draw") = FALSE
 	}
 	
 	
@@ -616,7 +632,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	# Preparing annotation colors
 	if(!is.na(annotation[[1]][1])){
 		annotation = annotation[colnames(mat), , drop = F]
-		annotation_colors = generate_annotation_colours(annotation, annotation_colors)
+		annotation_colors = generate_annotation_colours(annotation, annotation_colors, drop = drop_levels)
 	}
 	
 	if(!show_rownames){
