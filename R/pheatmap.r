@@ -533,6 +533,16 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' @param height manual option for determining the output file height in inches.
 #' @param \dots graphical parameters for the text used in plot. Parameters passed to 
 #' \code{\link{grid.text}}, see \code{\link{gpar}}. 
+#' 
+#' @return 
+#' Invisibly a list of components 
+#' \itemize{
+#' 	\item \code{tree_row} the clustering of rows as \code{\link{hclust}} object 
+#' 	\item \code{tree_col} the clustering of columsn as \code{\link{hclust}} object
+#' 	\item \code{kmeans} the kmeans clustering of rows if parameter \code{kmeans_k} was 
+#' specified 
+#' }
+#' 
 #' @author  Raivo Kolde <rkolde@@gmail.com>
 #' @examples
 #'  # Generate some data
@@ -544,13 +554,13 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'
 #'	# Draw heatmaps
 #'	pheatmap(test)
-#'  pheatmap(test, kmeans_k = 2)
+#'	pheatmap(test, kmeans_k = 2)
 #'	pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
 #'	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 #'	pheatmap(test, cluster_row = FALSE)
 #'	pheatmap(test, legend = FALSE)
-#'  pheatmap(test, display_numbers = TRUE)
-#'  pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
+#'	pheatmap(test, display_numbers = TRUE)
+#'	pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #'
@@ -563,7 +573,6 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, annotation = annotation)
 #'	pheatmap(test, annotation = annotation, annotation_legend = FALSE)
 #'	pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
-#'
 #'
 #'	# Specify colors
 #'	Var1 = c("navy", "darkgreen")
@@ -578,7 +587,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	drows = dist(test, method = "minkowski")
 #'	dcols = dist(t(test), method = "minkowski")
 #'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
-#' 
+#'	
 #' @export
 pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
 	
@@ -595,6 +604,9 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 		# Compose rownames
 		t = table(km$cluster)
 		rownames(mat) = sprintf("cl%s_size_%d", names(t), t)
+	}
+	else{
+		km = NA
 	}
 	
 	# Do clustering
@@ -656,6 +668,8 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	
 	# Draw heatmap
 	heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation = annotation, annotation_colors = annotation_colors, annotation_legend = annotation_legend, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number = fontsize_number, ...)
+	
+	invisible(list(tree_row = tree_row, tree_col = tree_col, kmeans = km))
 }
 
 
