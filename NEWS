@@ -1,0 +1,8 @@
+Version 0.7
+-------------------------------------------------------------------------------
+* Added opportunity to show also the corresponding numeric values in the cells 
+(see display_numbers parameter).
+* Added opportunity to show unused factor levels for column annotations in the 
+legend (drop_levels parameter). 
+* Changed the order how the rows are drawn when rows are not clustered. Before 
+it started from the bottom, now from the top.
