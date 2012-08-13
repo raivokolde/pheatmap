@@ -150,11 +150,16 @@
   Invisibly a list of components \itemize{ \item
   \code{tree_row} the clustering of rows as
   \code{\link{hclust}} object \item \code{tree_col} the
-  clustering of columsn as \code{\link{hclust}} object
+  clustering of columns as \code{\link{hclust}} object
   \item \code{kmeans} the kmeans clustering of rows if
   parameter \code{kmeans_k} was specified }
 }
 \description{
+  A function to draw clustered heatmaps where one has
+  better control over some graphical parameters such as
+  cell size, etc.
+}
+\details{
   The function also allows to aggregate the rows using
   kmeans clustering. This is advisable if number of rows is
   so big that R cannot handle their hierarchical clustering
@@ -186,7 +191,7 @@
 
 	# Generate column annotations
 	annotation = data.frame(Var1 = factor(1:10 \\\%\\\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
- annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
+	annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 	rownames(annotation) = paste("Test", 1:10, sep = "")
 
 	pheatmap(test, annotation = annotation)
