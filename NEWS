@@ -6,3 +6,4 @@ Version 0.7
 legend (drop_levels parameter). 
 * Changed the order how the rows are drawn when rows are not clustered. Before 
 it started from the bottom, now from the top.
+* Changed legend positioning according to the presence of column names

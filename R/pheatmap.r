@@ -322,14 +322,25 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 	# Draw annotation legend
 	if(!is.na(annotation[[1]][1]) & annotation_legend){
-		pushViewport(vplayout(3:5, 5))
+		if(length(rownames(matrix)) != 0){
+			pushViewport(vplayout(4:5, 5))
+		}
+		else{
+			pushViewport(vplayout(3:5, 5))
+		}
 		draw_annotation_legend(annotation, annotation_colors, border_color, fontsize = fontsize, ...)
 		upViewport()
 	}
 	
 	# Draw legend
 	if(!is.na(legend[1])){
-		pushViewport(vplayout(3:5, 4))
+		length(colnames(matrix))
+		if(length(rownames(matrix)) != 0){
+			pushViewport(vplayout(4:5, 4))
+		}
+		else{
+			pushViewport(vplayout(3:5, 4))
+		}
 		draw_legend(color, breaks, legend, fontsize = fontsize, ...)
 		upViewport()
 	}
