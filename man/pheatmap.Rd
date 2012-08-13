@@ -146,6 +146,14 @@
   plot. Parameters passed to \code{\link{grid.text}}, see
   \code{\link{gpar}}.}
 }
+\value{
+  Invisibly a list of components \itemize{ \item
+  \code{tree_row} the clustering of rows as
+  \code{\link{hclust}} object \item \code{tree_col} the
+  clustering of columsn as \code{\link{hclust}} object
+  \item \code{kmeans} the kmeans clustering of rows if
+  parameter \code{kmeans_k} was specified }
+}
 \description{
   The function also allows to aggregate the rows using
   kmeans clustering. This is advisable if number of rows is
@@ -165,13 +173,13 @@
 
 	# Draw heatmaps
 	pheatmap(test)
- pheatmap(test, kmeans_k = 2)
+	pheatmap(test, kmeans_k = 2)
 	pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
 	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 	pheatmap(test, cluster_row = FALSE)
 	pheatmap(test, legend = FALSE)
- pheatmap(test, display_numbers = TRUE)
- pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
+	pheatmap(test, display_numbers = TRUE)
+	pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
 	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 
@@ -184,7 +192,6 @@
 	pheatmap(test, annotation = annotation)
 	pheatmap(test, annotation = annotation, annotation_legend = FALSE)
 	pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
-
 
 	# Specify colors
 	Var1 = c("navy", "darkgreen")
