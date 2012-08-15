@@ -1,3 +1,8 @@
+Version 0.7.1
+-------------------------------------------------------------------------------
+* Added option to modify labels of the color scale legend (legend_breaks and
+legend_labels)
+
 Version 0.7
 -------------------------------------------------------------------------------
 * Added opportunity to show also the corresponding numeric values in the cells 

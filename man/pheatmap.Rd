@@ -12,7 +12,8 @@
     clustering_method = "complete",
     treeheight_row = ifelse(cluster_rows, 50, 0),
     treeheight_col = ifelse(cluster_cols, 50, 0),
-    legend = TRUE, annotation = NA, annotation_colors = NA,
+    legend = TRUE, legend_breaks = NA, legend_labels = NA,
+    annotation = NA, annotation_colors = NA,
     annotation_legend = TRUE, drop_levels = TRUE,
     show_rownames = T, show_colnames = T, main = NA,
     fontsize = 10, fontsize_row = fontsize,
@@ -79,8 +80,14 @@
   \item{treeheight_col}{the height of a tree for columns,
   if these are clustered. Default value 50 points.}
 
-  \item{legend}{boolean value that determines if legend
-  should be drawn or not.}
+  \item{legend}{logical to determine if legend should be
+  drawn or not.}
+
+  \item{legend_breaks}{vector of breakpoints for the
+  legend.}
+
+  \item{legend_labels}{vector of labels for the
+  \code{legend_breaks}.}
 
   \item{annotation}{data frame that specifies the
   annotations shown on top of the columns. Each row defines
@@ -185,6 +192,8 @@
 	pheatmap(test, legend = FALSE)
 	pheatmap(test, display_numbers = TRUE)
 	pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
+	pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0",
+"1e-4", "1e-3", "1e-2", "1e-1", "1"))
 	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 

@@ -21,8 +21,8 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
 	gp = list(fontsize = fontsize, ...)
 	# Legend position
 	if(!is.na(legend[1])){
-		longest_break = which.max(nchar(as.character(legend)))
-		longest_break = unit(1.1, "grobwidth", textGrob(as.character(legend)[longest_break], gp = do.call(gpar, gp)))
+		longest_break = which.max(nchar(names(legend)))
+		longest_break = unit(1.1, "grobwidth", textGrob(as.character(names(legend))[longest_break], gp = do.call(gpar, gp)))
 		title_length = unit(1.1, "grobwidth", textGrob("Scale", gp = gpar(fontface = "bold", ...)))
 		legend_width = unit(12, "bigpts") + longest_break * 1.2
 		legend_width = max(title_length, legend_width)
@@ -160,7 +160,7 @@ draw_legend = function(color, breaks, legend, ...){
 	breaks = (breaks - min(breaks)) / (max(breaks) - min(breaks))
 	h = breaks[-1] - breaks[-length(breaks)]
 	grid.rect(x = 0, y = breaks[-length(breaks)], width = unit(10, "bigpts"), height = h, hjust = 0, vjust = 0, gp = gpar(fill = color, col = "#FFFFFF00"))
-	grid.text(legend, x = unit(12, "bigpts"), y = legend_pos, hjust = 0, gp = gpar(...))
+	grid.text(names(legend), x = unit(12, "bigpts"), y = legend_pos, hjust = 0, gp = gpar(...))
 	upViewport()
 }
 
@@ -505,7 +505,9 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' Default value 50 points.
 #' @param treeheight_col the height of a tree for columns, if these are clustered. 
 #' Default value 50 points.
-#' @param legend boolean value that determines if legend should be drawn or not.
+#' @param legend logical to determine if legend should be drawn or not.
+#' @param legend_breaks vector of breakpoints for the legend.
+#' @param legend_labels vector of labels for the \code{legend_breaks}.
 #' @param annotation data frame that specifies the annotations shown on top of the 
 #' columns. Each row defines the features for a specific column. The columns in the data 
 #' and rows in the annotation are matched using corresponding row and column names. Note 
@@ -564,6 +566,8 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, legend = FALSE)
 #'	pheatmap(test, display_numbers = TRUE)
 #'	pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
+#'	pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0", 
+#' "1e-4", "1e-3", "1e-2", "1e-1", "1"))
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 #'	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #'
@@ -592,7 +596,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #'	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #'	
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
@@ -644,12 +648,31 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	
 	
 	# Colors and scales
+	if(!is.na(legend_breaks[1]) & !is.na(legend_labels[1])){
+		if(length(legend_breaks) != length(legend_labels)){
+			stop("Lengths of legend_breaks and legend_labels must be the same")
+		}
+	}
+	
+	
 	if(is.na(breaks[1])){
       breaks = generate_breaks(as.vector(mat), length(color))
   }
-  if (legend) {
+  if (legend & is.na(legend_breaks[1])) {
       legend = grid.pretty(range(as.vector(breaks)))
+			names(legend) = legend
   }
+	else if(legend & !is.na(legend_breaks[1])){
+		legend = legend_breaks[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
+		
+		if(!is.na(legend_labels[1])){
+			legend_labels = legend_labels[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
+			names(legend) = legend_labels
+		}
+		else{
+			names(legend) = legend
+		}
+	}
   else {
       legend = NA
   }
