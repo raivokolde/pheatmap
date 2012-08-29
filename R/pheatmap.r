@@ -132,7 +132,7 @@ draw_matrix = function(matrix, border_color, fmat, fontsize_number){
 	n = nrow(matrix)
 	m = ncol(matrix)
 	x = (1:m)/m - 1/2/m
-	y = (1:n)/n - 1/2/n
+	y = 1 - ((1:n)/n - 1/2/n)
 	for(i in 1:m){
 		grid.rect(x = x[i], y = y[1:n], width = 1/m, height = 1/n, gp = gpar(fill = matrix[,i], col = border_color))
 		if(attr(fmat, "draw")){
@@ -149,7 +149,7 @@ draw_colnames = function(coln, ...){
 
 draw_rownames = function(rown, ...){
 	n = length(rown)
-	y = (1:n)/n - 1/2/n
+	y = 1 - (1:n)/n - 1/2/n
 	grid.text(rown, x = unit(0.04, "npc"), y = y, vjust = 0.5, hjust = 0, gp = gpar(...))	
 }
 
@@ -624,7 +624,6 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	else{
 		tree_row = NA
 		treeheight_row = 0
-		mat = mat[nrow(mat):1, ]
 	}
 	
 	if(cluster_cols){
