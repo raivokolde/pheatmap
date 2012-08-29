@@ -2,6 +2,9 @@ Version 0.7.1
 -------------------------------------------------------------------------------
 * Added option to modify labels of the color scale legend (legend_breaks and
 legend_labels)
+* Changed the direction of plotting to start from the top instead of bottom on 
+y axis.
+
 
 Version 0.7
 -------------------------------------------------------------------------------
