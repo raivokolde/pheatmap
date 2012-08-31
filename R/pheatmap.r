@@ -149,7 +149,7 @@ draw_colnames = function(coln, ...){
 
 draw_rownames = function(rown, ...){
 	n = length(rown)
-	y = 1 - (1:n)/n - 1/2/n
+	y = 1 - ((1:n)/n - 1/2/n)
 	grid.text(rown, x = unit(0.04, "npc"), y = y, vjust = 0.5, hjust = 0, gp = gpar(...))	
 }
 
