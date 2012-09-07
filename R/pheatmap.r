@@ -121,6 +121,7 @@ draw_dendrogram = function(hc, horizontal = T){
 	else{
 		gr = rectGrob()
 		pushViewport(viewport(height = unit(1, "grobwidth", gr), width = unit(1, "grobheight", gr), angle = 90))
+		dist[, 1] = 1 - dist[, 1] 
 		for(i in 1:nrow(m)){
 			draw_connection(dist[m[i, 1], 1], dist[m[i, 2], 1], dist[m[i, 1], 2], dist[m[i, 2], 2], h[i])
 		}
