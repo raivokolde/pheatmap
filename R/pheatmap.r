@@ -569,7 +569,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' pheatmap(test, display_numbers = TRUE)
 #' pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
 #' pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0", 
-#' 1e-4", "1e-3", "1e-2", "1e-1", "1"))
+#' "1e-4", "1e-3", "1e-2", "1e-1", "1"))
 #' pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 #' pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #' 

@@ -177,49 +177,50 @@
 }
 \examples{
 # Generate some data
-	test = matrix(rnorm(200), 20, 10)
-	test[1:10, seq(1, 10, 2)] = test[1:10, seq(1, 10, 2)] + 3
-	test[11:20, seq(2, 10, 2)] = test[11:20, seq(2, 10, 2)] + 2
-	colnames(test) = paste("Test", 1:10, sep = "")
-	rownames(test) = paste("Gene", 1:20, sep = "")
+test = matrix(rnorm(200), 20, 10)
+test[1:10, seq(1, 10, 2)] = test[1:10, seq(1, 10, 2)] + 3
+test[11:20, seq(2, 10, 2)] = test[11:20, seq(2, 10, 2)] + 2
+test[15:20, seq(2, 10, 2)] = test[15:20, seq(2, 10, 2)] + 4
+colnames(test) = paste("Test", 1:10, sep = "")
+rownames(test) = paste("Gene", 1:20, sep = "")
 
-	# Draw heatmaps
-	pheatmap(test)
-	pheatmap(test, kmeans_k = 2)
-	pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
-	pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
-	pheatmap(test, cluster_row = FALSE)
-	pheatmap(test, legend = FALSE)
-	pheatmap(test, display_numbers = TRUE)
-	pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
-	pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0",
+# Draw heatmaps
+pheatmap(test)
+pheatmap(test, kmeans_k = 2)
+pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
+pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
+pheatmap(test, cluster_row = FALSE)
+pheatmap(test, legend = FALSE)
+pheatmap(test, display_numbers = TRUE)
+pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
+pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0",
 "1e-4", "1e-3", "1e-2", "1e-1", "1"))
-	pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
-	pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
+pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
+pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 
 
-	# Generate column annotations
-	annotation = data.frame(Var1 = factor(1:10 \\\%\\\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
-	annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
-	rownames(annotation) = paste("Test", 1:10, sep = "")
+# Generate column annotations
+annotation = data.frame(Var1 = factor(1:10 \\\%\\\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
+annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
+rownames(annotation) = paste("Test", 1:10, sep = "")
 
-	pheatmap(test, annotation = annotation)
-	pheatmap(test, annotation = annotation, annotation_legend = FALSE)
-	pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
+pheatmap(test, annotation = annotation)
+pheatmap(test, annotation = annotation, annotation_legend = FALSE)
+pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
 
-	# Specify colors
-	Var1 = c("navy", "darkgreen")
-	names(Var1) = c("Class1", "Class2")
-	Var2 = c("lightgreen", "navy")
+# Specify colors
+Var1 = c("navy", "darkgreen")
+names(Var1) = c("Class1", "Class2")
+Var2 = c("lightgreen", "navy")
 
-	ann_colors = list(Var1 = Var1, Var2 = Var2)
+ann_colors = list(Var1 = Var1, Var2 = Var2)
 
-	pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
+pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
 
-	# Specifying clustering from distance matrix
-	drows = dist(test, method = "minkowski")
-	dcols = dist(t(test), method = "minkowski")
-	pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
+# Specifying clustering from distance matrix
+drows = dist(test, method = "minkowski")
+dcols = dist(t(test), method = "minkowski")
+pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 }
 \author{
   Raivo Kolde <rkolde@gmail.com>
