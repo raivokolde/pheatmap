@@ -371,7 +371,7 @@ cluster_mat = function(mat, distance, method){
 		stop("distance has to be a dissimilarity structure as produced by dist or one measure  form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
 	}
 	if(distance[1] == "correlation"){
-		d = dist(1 - cor(t(mat)))
+		d = as.dist(1 - cor(t(mat)))
 	}
 	else{
 		if(class(distance) == "dist"){
