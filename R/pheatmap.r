@@ -409,7 +409,9 @@ generate_annotation_colours = function(annotation, annotation_colors, drop){
 			if (is.factor(annotation[, i]) & !drop){
 				count = count + length(levels(annotation[, i]))
 			}
-			count = count + length(unique(annotation[, i]))
+			else{
+				count = count + length(unique(annotation[, i]))
+			}
 		}
 	}
 	
