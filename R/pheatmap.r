@@ -623,7 +623,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	# Do clustering
 	if(cluster_rows){
 		tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
-		mat = mat[tree_row$order, ]
+		mat = mat[tree_row$order, , drop = FALSE]
 	}
 	else{
 		tree_row = NA
@@ -632,7 +632,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	
 	if(cluster_cols){
 		tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
-		mat = mat[, tree_col$order]
+		mat = mat[, tree_col$order, drop = FALSE]
 	}
 	else{
 		tree_col = NA
