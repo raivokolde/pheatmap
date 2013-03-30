@@ -1,3 +1,7 @@
+Version 0.7.6
+-------------------------------------------------------------------------------
+Fixed a bug, where the color scales for scaled matrices were not centered to 0.
+
 Version 0.7.5
 -------------------------------------------------------------------------------
 Minor bug fix
