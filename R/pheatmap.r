@@ -349,8 +349,16 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
 	
 }
 
-generate_breaks = function(x, n){
-	seq(min(x, na.rm = T), max(x, na.rm = T), length.out = n + 1)
+generate_breaks = function(x, n, center = F){
+	if(center){
+		m = max(abs(c(min(x, na.rm = T), max(x, na.rm = T))))
+		res = seq(-m, m, length.out = n + 1)
+	}
+	else{
+		res = seq(min(x, na.rm = T), max(x, na.rm = T), length.out = n + 1)
+	}
+	
+	return(res)
 }
 
 scale_vec_colours = function(x, col = rainbow(10), breaks = NA){
@@ -604,7 +612,13 @@ pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)
-	mat = scale_mat(mat, scale)
+	if(scale != "none"){
+		mat = scale_mat(mat, scale)
+		if(is.na(breaks)){
+			breaks = generate_breaks(mat, length(color), center = T)
+		}
+	}
+	
 	
 	# Kmeans
 	if(!is.na(kmeans_k)){
