@@ -1,18 +1,18 @@
 lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, ...){
 	# Get height of colnames and length of rownames
 	if(!is.null(coln[1])){
-		longest_coln = which.max(nchar(coln))
+		longest_coln = which.max(strwidth(coln, units = 'in'))
 		gp = list(fontsize = fontsize_col, ...)
-		coln_height = unit(1.1, "grobheight", textGrob(coln[longest_coln], rot = 90, gp = do.call(gpar, gp)))
+		coln_height = unit(1, "grobheight", textGrob(coln[longest_coln], rot = 90, gp = do.call(gpar, gp))) + unit(5, "bigpts")
 	}
 	else{
 		coln_height = unit(5, "bigpts")
 	}
 	
 	if(!is.null(rown[1])){
-		longest_rown = which.max(nchar(rown))
+		longest_rown = which.max(strwidth(rown, units = 'in'))
 		gp = list(fontsize = fontsize_row, ...)
-		rown_width = unit(1.2, "grobwidth", textGrob(rown[longest_rown], gp = do.call(gpar, gp)))
+		rown_width = unit(1, "grobwidth", textGrob(rown[longest_rown], gp = do.call(gpar, gp))) + unit(10, "bigpts")
 	}
 	else{
 		rown_width = unit(5, "bigpts")
@@ -545,7 +545,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' the extension in the path. Currently following formats are supported: png, pdf, tiff,
 #'  bmp, jpeg. Even if the plot does not fit into the plotting window, the file size is 
 #' calculated so that the plot would fit there, unless specified otherwise.
-#' @param width manual option for determining the output file width in
+#' @param width manual option for determining the output file width in inches.
 #' @param height manual option for determining the output file height in inches.
 #' @param \dots graphical parameters for the text used in plot. Parameters passed to 
 #' \code{\link{grid.text}}, see \code{\link{gpar}}. 
