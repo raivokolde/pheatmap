@@ -144,7 +144,7 @@
   plot would fit there, unless specified otherwise.}
 
   \item{width}{manual option for determining the output
-  file width in}
+  file width in inches.}
 
   \item{height}{manual option for determining the output
   file height in inches.}
