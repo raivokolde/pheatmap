@@ -1,7 +1,7 @@
 Package: pheatmap
 Type: Package
 Title: Pretty Heatmaps
-Version: 0.7.7
+Version: 0.7.8
 Date: 2013-30-3
 Author: Raivo Kolde
 Maintainer: Raivo Kolde <rkolde@gmail.com>
