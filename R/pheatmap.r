@@ -723,6 +723,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' row_ann <- data.frame(Cytokines=gl(2,nrow(test)/2),`Transcription Factors`=relevel(gl(2,nrow(test)/2),"2"))
 #' rownames(row_ann)<-rownames(test)
 #' pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE,row_annotation = row_ann)
+#' 
 #' # Specifying clustering from distance matrix
 #' drows = dist(test, method = "minkowski")
 #' dcols = dist(t(test), method = "minkowski")

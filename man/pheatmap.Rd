@@ -231,6 +231,10 @@ Var2 = c("lightgreen", "navy")
 
 ann_colors = list(Var1 = Var1, Var2 = Var2)
 
+#Specify row annotations
+row_ann <- data.frame(Cytokines=gl(2,nrow(test)/2),`Transcription Factors`=relevel(gl(2,nrow(test)/2),"2"))
+rownames(row_ann)<-rownames(test)
+pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE,row_annotation = row_ann)
 
 # Specifying clustering from distance matrix
 drows = dist(test, method = "minkowski")
