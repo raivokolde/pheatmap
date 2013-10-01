@@ -1,4 +1,4 @@
-lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col,row_annotation,row_annotation_legend, ...){
+lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col,row_annotation,row_annotation_legend,row_annotation_colors, ...){
 	# Get height of colnames and length of rownames
 	if(!is.null(coln[1])){
     if(!is.null(row_annotation)[[1]][1]){
@@ -658,6 +658,13 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' calculated so that the plot would fit there, unless specified otherwise.
 #' @param width manual option for determining the output file width in inches.
 #' @param height manual option for determining the output file height in inches.
+#' @param row_annotation data frame that specifies the annotations shown on the 
+#' rows. Each row defines the features for a specific row. The rows in the data 
+#' and rows in the annotation are matched using corresponding row names. Currently only binary
+#' categorical variables are supported with a default black and white color scheme. The category labels are
+#' given by the data frame column names.
+#' @param row_annotation_legend Not currently supported.
+#' @param row_annotation_colors Not currently supported.
 #' @param \dots graphical parameters for the text used in plot. Parameters passed to 
 #' \code{\link{grid.text}}, see \code{\link{gpar}}. 
 #' 
@@ -696,9 +703,11 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' 
 #' 
 #' # Generate column annotations
+#' annotation = data.frame(Var1 = factor(1:10 %% 2 == 0,
+#'                              labels = c("Class1", "Class2")), Var2 = 1:10)
 #' annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 #' rownames(annotation) = paste("Test", 1:10, sep = "")
-#' 
+#'
 #' pheatmap(test, annotation = annotation)
 #' pheatmap(test, annotation = annotation, annotation_legend = FALSE)
 #' pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
@@ -710,12 +719,15 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' 
 #' ann_colors = list(Var1 = Var1, Var2 = Var2)
 #' 
-#' 
+#' #Specify row annotations
+#' row_ann <- data.frame(Cytokines=gl(2,nrow(test)/2),`Transcription Factors`=relevel(gl(2,nrow(test)/2),"2"))
+#' rownames(row_ann)<-rownames(test)
+#' pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE,row_annotation = row_ann)
 #' # Specifying clustering from distance matrix
 #' drows = dist(test, method = "minkowski")
 #' dcols = dist(t(test), method = "minkowski")
 #' pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
-#'
+#' @importFrom RColorBrewer brewer.pal
 #' @export
 pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, row_annotation = NA, row_annotation_legend = FALSE, row_annotation_colors=NA, ...){
 	

@@ -6,7 +6,8 @@ Date: 2013-30-3
 Author: Raivo Kolde
 Maintainer: Raivo Kolde <rkolde@gmail.com>
 Depends:
-    R (>= 2.0)
+    R (>= 2.0),
+    RColorBrewer
 Description: A package for drawing pretty heatmaps in R. The ordinary heatmap
     function in R has several drawbacks when it comes to producing publication
     quality heatmaps. It is hard to produce pictures with consistent text, cell
