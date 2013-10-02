@@ -223,7 +223,7 @@ draw_annotations = function(converted_annotations, border_color){
 draw_row_annotations = function(converted_annotations, border_color){
   n = ncol(converted_annotations)
   m = nrow(converted_annotations)
-  y = (1:m)/m - 1/2/m
+  y = rev((1:m)/m - 1/2/m)
   x = cumsum(rep(8, n)) - 4 + cumsum(rep(2, n))
   for(i in 1:m){
     grid.rect(y = y[i], unit(x[1:n], "bigpts"), height = 1/m, width = unit(8, "bigpts"), gp = gpar(fill = converted_annotations[i, ], col = border_color))
