@@ -3,7 +3,7 @@
 \title{A function to draw clustered heatmaps.}
 \usage{
   pheatmap(mat,
-    color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100),
+    color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100),
     kmeans_k = NA, breaks = NA, border_color = "grey60",
     cellwidth = NA, cellheight = NA, scale = "none",
     cluster_rows = TRUE, cluster_cols = TRUE,
@@ -20,7 +20,9 @@
     fontsize_col = fontsize, display_numbers = F,
     number_format = "\%.2f",
     fontsize_number = 0.8 * fontsize, filename = NA,
-    width = NA, height = NA, ...)
+    width = NA, height = NA, row_annotation = NA,
+    row_annotation_legend = FALSE,
+    row_annotation_colors = NA, ...)
 }
 \arguments{
   \item{mat}{numeric matrix of the values to be plotted.}
@@ -149,6 +151,19 @@
   \item{height}{manual option for determining the output
   file height in inches.}
 
+  \item{row_annotation}{data frame that specifies the
+  annotations shown on the rows. Each row defines the
+  features for a specific row. The rows in the data and
+  rows in the annotation are matched using corresponding
+  row names. Currently only binary categorical variables
+  are supported with a default black and white color
+  scheme. The category labels are given by the data frame
+  column names.}
+
+  \item{row_annotation_legend}{Not currently supported.}
+
+  \item{row_annotation_colors}{Not currently supported.}
+
   \item{\dots}{graphical parameters for the text used in
   plot. Parameters passed to \code{\link{grid.text}}, see
   \code{\link{gpar}}.}
@@ -200,7 +215,8 @@ pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.p
 
 
 # Generate column annotations
-annotation = data.frame(Var1 = factor(1:10 \\\%\\\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
+annotation = data.frame(Var1 = factor(1:10 \%\% 2 == 0,
+                             labels = c("Class1", "Class2")), Var2 = 1:10)
 annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 rownames(annotation) = paste("Test", 1:10, sep = "")
 
@@ -215,7 +231,10 @@ Var2 = c("lightgreen", "navy")
 
 ann_colors = list(Var1 = Var1, Var2 = Var2)
 
-pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
+#Specify row annotations
+row_ann <- data.frame(Cytokines=gl(2,nrow(test)/2),`Transcription Factors`=relevel(gl(2,nrow(test)/2),"2"))
+rownames(row_ann)<-rownames(test)
+pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE,row_annotation = row_ann)
 
 # Specifying clustering from distance matrix
 drows = dist(test, method = "minkowski")
