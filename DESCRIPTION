@@ -14,7 +14,8 @@ Description: A package for drawing pretty heatmaps in R. The ordinary heatmap
     problems by offering more fine grained control over heatmap dimensions and
     appearance.
 Imports:
-    grid
+    grid,
+    RColorBrewer
 License: GPL-2
 LazyLoad: yes
 Collate:

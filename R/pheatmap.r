@@ -423,8 +423,7 @@ generate_annotation_colours = function(annotation, annotation_colors, drop){
 		}
 	}
 	
-	factor_colors = hsv((seq(0, 1, length.out = count + 1)[-1] + 
-      0.2)%%1, 0.7, 0.95)
+	factor_colors = hsv((seq(0, 1, length.out = count + 1)[-1] + 0.2)%%1, 0.7, 0.95)
 	
 	set.seed(3453)
 	
@@ -585,7 +584,8 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' 
 #' 
 #' # Generate column annotations
-#' annotation = data.frame(Var1 = factor(1:10 \%\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
+#' annotation = data.frame(Var1 = factor(1:10 %% 2 == 0, 
+#' 				labels = c("Class1", "Class2")), Var2 = 1:10)
 #' annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 #' rownames(annotation) = paste("Test", 1:10, sep = "")
 #' 
@@ -600,7 +600,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' 
 #' ann_colors = list(Var1 = Var1, Var2 = Var2)
 #' 
-#' pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
+#' pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example")
 #' 
 #' # Specifying clustering from distance matrix
 #' drows = dist(test, method = "minkowski")
@@ -608,7 +608,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #'
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete",  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", fontsize_number = 0.8 * fontsize, filename = NA, width = NA, height = NA, ...){
 	
 	# Preprocess matrix
 	mat = as.matrix(mat)

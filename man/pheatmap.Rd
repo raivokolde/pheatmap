@@ -3,7 +3,7 @@
 \title{A function to draw clustered heatmaps.}
 \usage{
   pheatmap(mat,
-    color = colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", "#E0F3F8", "#91BFDB", "#4575B4")))(100),
+    color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100),
     kmeans_k = NA, breaks = NA, border_color = "grey60",
     cellwidth = NA, cellheight = NA, scale = "none",
     cluster_rows = TRUE, cluster_cols = TRUE,
@@ -200,7 +200,8 @@ pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.p
 
 
 # Generate column annotations
-annotation = data.frame(Var1 = factor(1:10 \\\%\\\% 2 == 0, labels = c("Class1", "Class2")), Var2 = 1:10)
+annotation = data.frame(Var1 = factor(1:10 \%\% 2 == 0,
+				labels = c("Class1", "Class2")), Var2 = 1:10)
 annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
 rownames(annotation) = paste("Test", 1:10, sep = "")
 
@@ -215,7 +216,7 @@ Var2 = c("lightgreen", "navy")
 
 ann_colors = list(Var1 = Var1, Var2 = Var2)
 
-pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example with all the features")
+pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example")
 
 # Specifying clustering from distance matrix
 drows = dist(test, method = "minkowski")

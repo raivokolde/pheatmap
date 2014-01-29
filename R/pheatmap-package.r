@@ -10,5 +10,6 @@
 #' @docType package
 #' 
 #' @import grid
+#' @import RColorBrewer
 #' 
 NA
