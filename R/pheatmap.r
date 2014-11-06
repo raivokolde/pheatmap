@@ -107,26 +107,37 @@ draw_dendrogram = function(hc, horizontal = T){
     }
     
     draw_connection = function(x1, x2, y1, y2, y){
-        grid.lines(x = c(x1, x1), y = c(y1, y))
-        grid.lines(x = c(x2, x2), y = c(y2, y))
-        grid.lines(x = c(x1, x2), y = c(y, y))
+        res = list(
+            x = c(x1, x1, x2, x2),
+            y = c(y1, y, y, y2)
+        )
+        
+        return(res)
     }
     
     if(horizontal){
-        for(i in 1:nrow(m)){
-            draw_connection(dist[m[i, 1], 1], dist[m[i, 2], 1], dist[m[i, 1], 2], dist[m[i, 2], 2], h[i])
-        }
+        pushViewport(viewport())
     }
-    
     else{
         gr = rectGrob()
         pushViewport(viewport(height = unit(1, "grobwidth", gr), width = unit(1, "grobheight", gr), angle = 90))
         dist[, 1] = 1 - dist[, 1] 
-        for(i in 1:nrow(m)){
-            draw_connection(dist[m[i, 1], 1], dist[m[i, 2], 1], dist[m[i, 1], 2], dist[m[i, 2], 2], h[i])
-        }
-        upViewport()
     }
+    
+    x = rep(NA, nrow(m) * 4)
+    y = rep(NA, nrow(m) * 4)
+    id = rep(1:nrow(m), rep(4, nrow(m)))
+    
+    for(i in 1:nrow(m)){
+        c = draw_connection(dist[m[i, 1], 1], dist[m[i, 2], 1], dist[m[i, 1], 2], dist[m[i, 2], 2], h[i])
+        k = (i - 1) * 4 + 1
+        x[k : (k + 3)] = c$x
+        y[k : (k + 3)] = c$y
+    }
+    
+    grid.polyline(x = x, y = y, id = id)
+    
+    upViewport()
 }
 
 draw_matrix = function(matrix, border_color, fmat, fontsize_number){
