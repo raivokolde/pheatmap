@@ -546,7 +546,8 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' @param fontsize_row fontsize for rownames (Default: fontsize) 
 #' @param fontsize_col fontsize for colnames (Default: fontsize) 
 #' @param display_numbers logical determining if the numeric values are also printed to 
-#' the cells. 
+#' the cells. If this is a matrix (with same dimensions as original matrix), the contents
+#' of the matrix are shown instead of original values.
 #' @param number_format format strings (C printf style) of the numbers shown in cells. 
 #' For example "\code{\%.2f}" shows 2 decimal places and "\code{\%.1e}" shows exponential 
 #' notation (see more in \code{\link{sprintf}}).    
@@ -588,6 +589,7 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
 #' pheatmap(test, legend = FALSE)
 #' pheatmap(test, display_numbers = TRUE)
 #' pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
+#' pheatmap(test, display_numbers = matrix(ifelse(test > 5, "*", ""), nrow(test)))
 #' pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0", 
 #' "1e-4", "1e-3", "1e-2", "1e-1", "1"))
 #' pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
@@ -645,10 +647,33 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         km = NA
     }
     
+    # Format numbers to be displayed in cells
+    if(is.matrix(display_numbers) | is.data.frame(display_numbers)){
+        if(nrow(display_numbers) != nrow(mat) | ncol(display_numbers) != ncol(mat)){
+            stop("If display_numbers provided as matrix, its dimensions have to match with mat")
+        }
+        
+        display_numbers = as.matrix(display_numbers)
+        fmat = matrix(as.character(display_numbers), nrow = nrow(display_numbers), ncol = ncol(display_numbers))
+        fmat_draw = TRUE
+        
+    }
+    else{
+        if(display_numbers){
+            fmat = matrix(sprintf(number_format, mat), nrow = nrow(mat), ncol = ncol(mat))
+            fmat_draw = TRUE
+        }
+        else{
+            fmat = matrix(NA, nrow = nrow(mat), ncol = ncol(mat))
+            fmat_draw = FALSE
+        }
+    }
+    
     # Do clustering
     if(cluster_rows){
         tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
         mat = mat[tree_row$order, , drop = FALSE]
+        fmat = fmat[tree_row$order, , drop = FALSE]
     }
     else{
         tree_row = NA
@@ -658,22 +683,14 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     if(cluster_cols){
         tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
         mat = mat[, tree_col$order, drop = FALSE]
+        fmat = fmat[, tree_col$order, drop = FALSE]
     }
     else{
         tree_col = NA
         treeheight_col = 0
     }
     
-    # Format numbers to be displayed in cells 
-    if(display_numbers){
-        fmat = matrix(sprintf(number_format, mat), nrow = nrow(mat), ncol = ncol(mat))
-        attr(fmat, "draw") = TRUE
-    }
-    else{
-        fmat = matrix(NA, nrow = nrow(mat), ncol = ncol(mat))
-        attr(fmat, "draw") = FALSE
-    }
-    
+    attr(fmat, "draw") = fmat_draw
     
     # Colors and scales
     if(!is.na(legend_breaks[1]) & !is.na(legend_labels[1])){

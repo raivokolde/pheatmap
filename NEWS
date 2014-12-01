@@ -1,3 +1,8 @@
+Version 0.7.9
+-------------------------------------------------------------------------------
+Added option to show arbitrary values within cells, by giving a matrix to 
+display_numbers parameter.
+
 Version 0.7.8
 -------------------------------------------------------------------------------
 Made the dendrogram drawing faster
