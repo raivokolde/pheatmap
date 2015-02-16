@@ -18,6 +18,3 @@ Imports:
     RColorBrewer
 License: GPL-2
 LazyLoad: yes
-Collate:
-    'pheatmap-package.r'
-    'pheatmap.r'
