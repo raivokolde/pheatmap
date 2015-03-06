@@ -1,6 +1,7 @@
 Version 0.7.10
 -------------------------------------------------------------------------------
 Can set color to the values shown inside the cells. 
+Accept ward.D, ward.D2 new methods for hclust
 
 Version 0.7.9
 -------------------------------------------------------------------------------
