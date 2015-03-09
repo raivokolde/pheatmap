@@ -8,14 +8,17 @@ pheatmap(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name =
   cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE,
   cluster_cols = TRUE, clustering_distance_rows = "euclidean",
   clustering_distance_cols = "euclidean", clustering_method = "complete",
+  cutree_rows = NA, cutree_cols = NA,
   treeheight_row = ifelse(cluster_rows, 50, 0),
   treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE,
-  legend_breaks = NA, legend_labels = NA, annotation = NA,
-  annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE,
-  show_rownames = T, show_colnames = T, main = NA, fontsize = 10,
-  fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F,
-  number_format = "\%.2f", number_color = "grey30", fontsize_number = 0.8
-  * fontsize, filename = NA, width = NA, height = NA, ...)
+  legend_breaks = NA, legend_labels = NA, annotation_row = NA,
+  annotation_col = NA, annotation = NA, annotation_colors = NA,
+  annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T,
+  show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize,
+  fontsize_col = fontsize, display_numbers = F, number_format = "\%.2f",
+  number_color = "grey30", fontsize_number = 0.8 * fontsize,
+  gaps_row = NULL, gaps_col = NULL, labels_row = NULL,
+  labels_col = NULL, filename = NA, width = NA, height = NA, ...)
 }
 \arguments{
 \item{mat}{numeric matrix of the values to be plotted.}
@@ -58,6 +61,12 @@ values the same as for clustering_distance_rows.}
 \item{clustering_method}{clustering method used. Accepts the same values as
 \code{\link{hclust}}.}
 
+\item{cutree_rows}{number of clusters the rows are divided into, based on the
+ hierarchical clustering (using cutree), if rows are not clustered, the
+argument is ignored}
+
+\item{cutree_cols}{similar to \code{cutree_rows}, but for columns}
+
 \item{treeheight_row}{the height of a tree for rows, if these are clustered.
 Default value 50 points.}
 
@@ -70,19 +79,25 @@ Default value 50 points.}
 
 \item{legend_labels}{vector of labels for the \code{legend_breaks}.}
 
-\item{annotation}{data frame that specifies the annotations shown on top of the
-columns. Each row defines the features for a specific column. The columns in the data
-and rows in the annotation are matched using corresponding row and column names. Note
-that color schemes takes into account if variable is continuous or discrete.}
+\item{annotation_row}{data frame that specifies the annotations shown on left
+ side of the heatmap. Each row defines the features for a specific row. The
+rows in the data and in the annotation are matched using corresponding row
+ names. Note that color schemes takes into account if variable is continuous
+ or discrete.}
 
-\item{annotation_colors}{list for specifying annotation track colors manually. It is
-possible to define the colors for only some of the features. Check examples for
-details.}
+\item{annotation_col}{similar to annotation_row, but for columns.}
 
-\item{annotation_legend}{boolean value showing if the legend for annotation tracks
-should be drawn.}
+\item{annotation}{deprecated parameter that currently sets the annotation_col if it is missing}
 
-\item{drop_levels}{logical to determine if unused levels are also shown in the legend}
+\item{annotation_colors}{list for specifying annotation_row and
+annotation_col track colors manually. It is  possible to define the colors
+for only some of the features. Check examples for  details.}
+
+\item{annotation_legend}{boolean value showing if the legend for annotation
+tracks should be drawn.}
+
+\item{drop_levels}{logical to determine if unused levels are also shown in
+the legend}
 
 \item{show_rownames}{boolean specifying if column names are be shown.}
 
@@ -107,6 +122,16 @@ notation (see more in \code{\link{sprintf}}).}
 \item{number_color}{color of the text}
 
 \item{fontsize_number}{fontsize of the numbers displayed in cells}
+
+\item{gaps_row}{vector of row indices that show shere to put gaps into
+heatmap. Used only if the rows are not clustered. See \code{cutree_row}
+to see how to introduce gaps to clustered rows.}
+
+\item{gaps_col}{similar to gaps_row, but for columns.}
+
+\item{labels_row}{custom labels for rows that are used instead of rownames.}
+
+\item{labels_col}{similar to labels_row, but for columns.}
 
 \item{filename}{file path where to save the picture. Filetype is decided by
 the extension in the path. Currently following formats are supported: png, pdf, tiff,
@@ -141,7 +166,7 @@ separately one can cluster the rows in advance and show only the cluster centers
 The number of clusters can be tuned with parameter kmeans_k.
 }
 \examples{
-# Generate some data
+# Create test matrix
 test = matrix(rnorm(200), 20, 10)
 test[1:10, seq(1, 10, 2)] = test[1:10, seq(1, 10, 2)] + 3
 test[11:20, seq(2, 10, 2)] = test[11:20, seq(2, 10, 2)] + 2
@@ -156,33 +181,56 @@ pheatmap(test, scale = "row", clustering_distance_rows = "correlation")
 pheatmap(test, color = colorRampPalette(c("navy", "white", "firebrick3"))(50))
 pheatmap(test, cluster_row = FALSE)
 pheatmap(test, legend = FALSE)
+
+# Show text within cells
 pheatmap(test, display_numbers = TRUE)
-pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
+pheatmap(test, display_numbers = TRUE, number_format = "\\\%.1e")
 pheatmap(test, display_numbers = matrix(ifelse(test > 5, "*", ""), nrow(test)))
 pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0",
 "1e-4", "1e-3", "1e-2", "1e-1", "1"))
+
+# Fix cell sizes and save to file with correct size
 pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
 pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 
+# Generate annotations for rows and columns
+annotation_col = data.frame(
+                    CellType = factor(rep(c("CT1", "CT2"), 5)),
+                    Time = 1:5
+                )
+rownames(annotation_col) = paste("Test", 1:10, sep = "")
 
-# Generate column annotations
-annotation = data.frame(Var1 = factor(1:10 \%\% 2 == 0,
-                labels = c("Class1", "Class2")), Var2 = 1:10)
-annotation$Var1 = factor(annotation$Var1, levels = c("Class1", "Class2", "Class3"))
-rownames(annotation) = paste("Test", 1:10, sep = "")
+annotation_row = data.frame(
+                    GeneClass = factor(rep(c("Path1", "Path2", "Path3"), c(10, 4, 6)))
+                )
+rownames(annotation_row) = paste("Gene", 1:20, sep = "")
 
-pheatmap(test, annotation = annotation)
-pheatmap(test, annotation = annotation, annotation_legend = FALSE)
-pheatmap(test, annotation = annotation, annotation_legend = FALSE, drop_levels = FALSE)
+# Display row and color annotations
+pheatmap(test, annotation_col = annotation_col)
+pheatmap(test, annotation_col = annotation_col, annotation_legend = FALSE)
+pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row)
+
 
 # Specify colors
-Var1 = c("navy", "darkgreen")
-names(Var1) = c("Class1", "Class2")
-Var2 = c("lightgreen", "navy")
+ann_colors = list(
+    Time = c("white", "firebrick"),
+    CellType = c(CT1 = "#1B9E77", CT2 = "#D95F02"),
+    GeneClass = c(Path1 = "#7570B3", Path2 = "#E7298A", Path3 = "#66A61E")
+)
 
-ann_colors = list(Var1 = Var1, Var2 = Var2)
+pheatmap(test, annotation_col = annotation_col, annotation_colors = ann_colors, main = "Example")
+pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = ann_colors)
+pheatmap(test, annotation_col = annotation_col, annotation_colors = ann_colors[2])
 
-pheatmap(test, annotation = annotation, annotation_colors = ann_colors, main = "Example")
+# Gaps in heatmaps
+pheatmap(test, annotation_col = annotation_col, cluster_rows = FALSE, gaps_row = c(10, 14))
+pheatmap(test, annotation_col = annotation_col, cluster_rows = FALSE, gaps_row = c(10, 14), cutree_col = 2)
+
+# Show custom strings as row/col names
+labels_row = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+"", "", "Il10", "Il15", "Il1b")
+
+pheatmap(test, annotation_col = annotation_col, labels_row = labels_row)
 
 # Specifying clustering from distance matrix
 drows = dist(test, method = "minkowski")

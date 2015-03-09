@@ -11,5 +11,8 @@
 #' 
 #' @import grid
 #' @import RColorBrewer
+#' @import scales
+#' @import gtable
+#' 
 #' 
 NA

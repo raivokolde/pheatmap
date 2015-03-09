@@ -3,3 +3,5 @@
 export(pheatmap)
 import(RColorBrewer)
 import(grid)
+import(gtable)
+import(scales)
