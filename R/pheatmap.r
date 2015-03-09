@@ -425,7 +425,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     
     # Draw matrix
     elem = draw_matrix(matrix, border_color, gaps_row, gaps_col, fmat, fontsize_number, number_color)
-    res = gtable_add_grob(res, elem, t = 4, l = 3, name = "matrix")
+    res = gtable_add_grob(res, elem, t = 4, l = 3, clip = "off", name = "matrix")
     
     # Draw colnames
     if(length(labels_col) != 0){
@@ -446,7 +446,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
         # Draw tracks
         converted_annotation = convert_annotations(annotation_col, annotation_colors)
         elem = draw_annotations(converted_annotation, border_color, gaps_col, fontsize, horizontal = T)
-        res = gtable_add_grob(res, elem, t = 3, l = 3, name = "col_annotation")
+        res = gtable_add_grob(res, elem, t = 3, l = 3, clip = "off", name = "col_annotation")
         
         # Draw names
         elem = draw_annotation_names(annotation_col, fontsize, horizontal = T)
@@ -459,7 +459,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
         # Draw tracks
         converted_annotation = convert_annotations(annotation_row, annotation_colors)
         elem = draw_annotations(converted_annotation, border_color, gaps_row, fontsize, horizontal = F)
-        res = gtable_add_grob(res, elem, t = 4, l = 2, name = "row_annotation")
+        res = gtable_add_grob(res, elem, t = 4, l = 2, clip = "off", name = "row_annotation")
         
         # Draw names
         elem = draw_annotation_names(annotation_row, fontsize, horizontal = F)
@@ -611,6 +611,12 @@ kmeans_pheatmap = function(mat, k = min(nrow(mat), 150), sd_limit = NA, ...){
     
     # Draw heatmap
     pheatmap(mat2, ...)
+}
+
+find_gaps = function(tree, cutree_n){
+    v = cutree(tree, cutree_n)[tree$order]
+    gaps = which((v[-1] - v[-length(v)]) != 0)
+    
 }
  
 #' A function to draw clustered heatmaps.
@@ -852,7 +858,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         fmat = fmat[tree_row$order, , drop = FALSE]
         labels_row = labels_row[tree_row$order]
         if(!is.na(cutree_rows)){
-            gaps_row = cumsum(table(cutree(tree_row, cutree_rows)))[-cutree_rows]
+            gaps_row = find_gaps(tree_row, cutree_rows)
         }
         else{
             gaps_row = NULL
@@ -869,7 +875,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         fmat = fmat[, tree_col$order, drop = FALSE]
         labels_col = labels_col[tree_col$order]
         if(!is.na(cutree_cols)){
-            gaps_col = cumsum(table(cutree(tree_col, cutree_cols)))[-cutree_cols]
+            gaps_col = find_gaps(tree_col, cutree_cols)
         }
         else{
             gaps_col = NULL

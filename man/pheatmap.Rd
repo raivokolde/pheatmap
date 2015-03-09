@@ -18,7 +18,8 @@ pheatmap(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name =
   fontsize_col = fontsize, display_numbers = F, number_format = "\%.2f",
   number_color = "grey30", fontsize_number = 0.8 * fontsize,
   gaps_row = NULL, gaps_col = NULL, labels_row = NULL,
-  labels_col = NULL, filename = NA, width = NA, height = NA, ...)
+  labels_col = NULL, filename = NA, width = NA, height = NA,
+  silent = FALSE, ...)
 }
 \arguments{
 \item{mat}{numeric matrix of the values to be plotted.}
@@ -141,6 +142,8 @@ calculated so that the plot would fit there, unless specified otherwise.}
 \item{width}{manual option for determining the output file width in inches.}
 
 \item{height}{manual option for determining the output file height in inches.}
+
+\item{silent}{do not draw the plot (useful when using the gtable output)}
 
 \item{\dots}{graphical parameters for the text used in plot. Parameters passed to
 \code{\link{grid.text}}, see \code{\link{gpar}}.}
