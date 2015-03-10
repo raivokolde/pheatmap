@@ -221,13 +221,15 @@ ann_colors = list(
     GeneClass = c(Path1 = "#7570B3", Path2 = "#E7298A", Path3 = "#66A61E")
 )
 
-pheatmap(test, annotation_col = annotation_col, annotation_colors = ann_colors, main = "Example")
-pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = ann_colors)
+pheatmap(test, annotation_col = annotation_col, annotation_colors = ann_colors, main = "Title")
+pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row,
+         annotation_colors = ann_colors)
 pheatmap(test, annotation_col = annotation_col, annotation_colors = ann_colors[2])
 
 # Gaps in heatmaps
 pheatmap(test, annotation_col = annotation_col, cluster_rows = FALSE, gaps_row = c(10, 14))
-pheatmap(test, annotation_col = annotation_col, cluster_rows = FALSE, gaps_row = c(10, 14), cutree_col = 2)
+pheatmap(test, annotation_col = annotation_col, cluster_rows = FALSE, gaps_row = c(10, 14),
+         cutree_col = 2)
 
 # Show custom strings as row/col names
 labels_row = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
