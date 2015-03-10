@@ -4,6 +4,7 @@
 \alias{pheatmap-package}
 \title{Pretty heatmaps}
 \description{
-A grid based implementation of heatmaps that offers more control over heatmap dimensions and appearance.
+A grid based implementation of heatmaps that offers more control
+over heatmap dimensions and appearance.
 }
 
