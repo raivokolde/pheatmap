@@ -248,7 +248,8 @@ convert_annotations = function(annotation, annotation_colors){
         b = annotation_colors[[colnames(annotation)[i]]]
         if(is.character(a) | is.factor(a)){
             a = as.character(a)
-            if(length(setdiff(a, names(b))) > 0){
+            
+            if(length(setdiff(setdiff(a, NA), names(b))) > 0){
                 stop(sprintf("Factor levels on variable %s do not match with annotation_colors", colnames(annotation)[i]))
             }
             new[, i] = b[a]
@@ -551,6 +552,7 @@ generate_annotation_colours = function(annotation, annotation_colors, drop){
     }
     count = 0
     for(i in 1:length(annotation)){
+        annotation[[i]] = annotation[[i]][!is.na(annotation[[i]])]
         if(is.character(annotation[[i]]) | is.factor(annotation[[i]])){
             if (is.factor(annotation[[i]]) & !drop){
                 count = count + length(levels(annotation[[i]]))
