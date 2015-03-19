@@ -22,7 +22,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     
     gp = list(fontsize = fontsize, ...)
     # Legend position
-    if(!is.na(legend[1])){
+    if(!is.na2(legend)){
         longest_break = which.max(nchar(names(legend)))
         longest_break = unit(1.1, "grobwidth", textGrob(as.character(names(legend))[longest_break], gp = do.call(gpar, gp)))
         title_length = unit(1.1, "grobwidth", textGrob("Scale", gp = gpar(fontface = "bold", ...)))
@@ -44,7 +44,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     # Column annotations
     textheight = unit(fontsize, "bigpts")
     
-    if(!is.na(annotation_col[[1]][1])){
+    if(!is.na2(annotation_col)){
         # Column annotation height 
         annot_col_height = ncol(annotation_col) * (textheight + unit(2, "bigpts")) + unit(2, "bigpts")
         
@@ -61,7 +61,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     }
     
     # Row annotations
-    if(!is.na(annotation_row[[1]][1])){
+    if(!is.na2(annotation_row)){
         # Row annotation width 
         annot_row_width = ncol(annotation_row) * (textheight + unit(2, "bigpts")) + unit(2, "bigpts")
         
@@ -413,13 +413,13 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     }
     
     # Draw tree for the columns
-    if(!is.na(tree_col[[1]][1]) & treeheight_col != 0){
+    if(!is.na2(tree_col) & treeheight_col != 0){
         elem = draw_dendrogram(tree_col, gaps_col, horizontal = T)
         res = gtable_add_grob(res, elem, t = 2, l = 3, name = "col_tree")
     }
     
     # Draw tree for the rows
-    if(!is.na(tree_row[[1]][1]) & treeheight_row != 0){
+    if(!is.na2(tree_row) & treeheight_row != 0){
         elem = draw_dendrogram(tree_row, gaps_row, horizontal = F)
         res = gtable_add_grob(res, elem, t = 4, l = 1, name = "row_tree")
     }
@@ -443,7 +443,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     }
     
     # Draw annotation tracks on cols
-    if(!is.na(annotation_col[[1]][1])){
+    if(!is.na2(annotation_col)){
         # Draw tracks
         converted_annotation = convert_annotations(annotation_col, annotation_colors)
         elem = draw_annotations(converted_annotation, border_color, gaps_col, fontsize, horizontal = T)
@@ -456,7 +456,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     }
     
     # Draw annotation tracks on rows
-    if(!is.na(annotation_row[[1]][1])){
+    if(!is.na2(annotation_row)){
         # Draw tracks
         converted_annotation = convert_annotations(annotation_row, annotation_colors)
         elem = draw_annotations(converted_annotation, border_color, gaps_row, fontsize, horizontal = F)
@@ -469,7 +469,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     
     # Draw annotation legend
     annotation = c(annotation_col[length(annotation_col):1], annotation_row[length(annotation_row):1])
-    annotation = annotation[unlist(lapply(annotation, function(x) !is.na(x[1])))]
+    annotation = annotation[unlist(lapply(annotation, function(x) !is.na2(x)))]
     
     if(length(annotation) > 0 & annotation_legend){
         elem = draw_annotation_legend(annotation, annotation_colors, border_color, fontsize = fontsize, ...)
@@ -479,7 +479,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     }
     
     # Draw legend
-    if(!is.na(legend[1])){
+    if(!is.na2(legend)){
         elem = draw_legend(color, breaks, legend, fontsize = fontsize, ...)
         
         t = ifelse(is.null(labels_row), 4, 3)
@@ -547,7 +547,7 @@ scale_mat = function(mat, scale){
 }
 
 generate_annotation_colours = function(annotation, annotation_colors, drop){
-    if(is.na(annotation_colors)[[1]][1]){
+    if(is.na2(annotation_colors)){
         annotation_colors = list()
     }
     count = 0
@@ -619,6 +619,17 @@ find_gaps = function(tree, cutree_n){
     v = cutree(tree, cutree_n)[tree$order]
     gaps = which((v[-1] - v[-length(v)]) != 0)
     
+}
+
+is.na2 = function(x){
+    if(is.list(x) | length(x) > 1){
+        return(FALSE)
+    }
+    if(length(x) == 0){
+        return(TRUE)
+    }
+    
+    return(is.na(x))
 }
  
 #' A function to draw clustered heatmaps.
@@ -813,7 +824,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     mat = as.matrix(mat)
     if(scale != "none"){
         mat = scale_mat(mat, scale)
-        if(is.na(breaks)){
+        if(is.na2(breaks)){
             breaks = generate_breaks(mat, length(color), center = T)
         }
     }
@@ -893,24 +904,24 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     attr(fmat, "draw") = fmat_draw
     
     # Colors and scales
-    if(!is.na(legend_breaks[1]) & !is.na(legend_labels[1])){
+    if(!is.na2(legend_breaks) & !is.na2(legend_labels)){
         if(length(legend_breaks) != length(legend_labels)){
             stop("Lengths of legend_breaks and legend_labels must be the same")
         }
     }
     
     
-    if(is.na(breaks[1])){
+    if(is.na2(breaks)){
         breaks = generate_breaks(as.vector(mat), length(color))
     }
-    if (legend & is.na(legend_breaks[1])) {
+    if (legend & is.na2(legend_breaks)) {
         legend = grid.pretty(range(as.vector(breaks)))
         names(legend) = legend
     }
-    else if(legend & !is.na(legend_breaks[1])){
+    else if(legend & !is.na2(legend_breaks)){
         legend = legend_breaks[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
         
-        if(!is.na(legend_labels[1])){
+        if(!is.na2(legend_labels)){
             legend_labels = legend_labels[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
             names(legend) = legend_labels
         }
@@ -924,20 +935,20 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     mat = scale_colours(mat, col = color, breaks = breaks)
     
     # Preparing annotations
-    if(is.na(annotation_col[[1]][1]) & !is.na(annotation[[1]][1])){
+    if(is.na2(annotation_col) & !is.na2(annotation)){
         annotation_col = annotation
     }
     # Select only the ones present in the matrix
-    if(!is.na(annotation_col[[1]][1])){
+    if(!is.na2(annotation_col)){
         annotation_col = annotation_col[colnames(mat), , drop = F]
     }
     
-    if(!is.na(annotation_row[[1]][1])){
+    if(!is.na2(annotation_row)){
         annotation_row = annotation_row[rownames(mat), , drop = F]
     }
     
     annotation = c(annotation_row, annotation_col)
-    annotation = annotation[unlist(lapply(annotation, function(x) !is.na(x[1])))]
+    annotation = annotation[unlist(lapply(annotation, function(x) !is.na2(x)))]
     if(length(annotation) != 0){
         annotation_colors = generate_annotation_colours(annotation, annotation_colors, drop = drop_levels)
     }
