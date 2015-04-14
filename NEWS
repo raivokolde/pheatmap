@@ -1,3 +1,7 @@
+Version 1.0.5
+-------------------------------------------------------------------------------
+Fixed the continuous legend bug
+
 Version 1.0.4
 -------------------------------------------------------------------------------
 Make the NA handling in parameters more intelligent

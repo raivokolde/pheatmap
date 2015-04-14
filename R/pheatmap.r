@@ -336,7 +336,7 @@ draw_annotation_legend = function(annotation, annotation_colors, border_color, .
             h = 8 * text_height * 0.25
             
             res[[paste(i, "r")]] = rectGrob(x = unit(0, "npc"), y = yy, hjust = 0, vjust = 1, height = h, width = 2 * text_height, gp = gpar(col = NA, fill = colorRampPalette(annotation_colors[[i]])(4)))
-            res[[paste(i, "r2")]] = rectGrob(x = unit(0, "npc"), y = y, hjust = 0, vjust = 1, height = 8 * text_height, width = 2 * text_height, gp = gpar(col = border_color))
+            res[[paste(i, "r2")]] = rectGrob(x = unit(0, "npc"), y = y, hjust = 0, vjust = 1, height = 8 * text_height, width = 2 * text_height, gp = gpar(col = border_color, fill = NA))
             
             txt = rev(range(grid.pretty(range(annotation[[i]], na.rm = TRUE))))
             yy = y - c(1, 7) * text_height
