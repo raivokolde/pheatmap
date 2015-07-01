@@ -1,3 +1,8 @@
+Version 1.0.6
+-------------------------------------------------------------------------------
+Added clustering_callback option to give more control over the hierarchical 
+clustering
+
 Version 1.0.5
 -------------------------------------------------------------------------------
 Fixed the continuous legend bug

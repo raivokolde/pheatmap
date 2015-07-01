@@ -463,8 +463,10 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
         res = gtable_add_grob(res, elem, t = 4, l = 2, clip = "off", name = "row_annotation")
         
         # Draw names
-        elem = draw_annotation_names(annotation_row, fontsize, horizontal = F)
-        res = gtable_add_grob(res, elem, t = 5, l = 2, clip = "off", name = "row_annotation_names")
+        if(length(labels_col) != 0){
+            elem = draw_annotation_names(annotation_row, fontsize, horizontal = F)
+            res = gtable_add_grob(res, elem, t = 5, l = 2, clip = "off", name = "row_annotation_names")
+        }
     }
     
     # Draw annotation legend
@@ -631,7 +633,11 @@ is.na2 = function(x){
     
     return(is.na(x))
 }
- 
+
+identity2 = function(x, ...){
+    return(x)
+}
+
 #' A function to draw clustered heatmaps.
 #' 
 #' A function to draw clustered heatmaps where one has better control over some graphical 
@@ -670,6 +676,9 @@ is.na2 = function(x){
 #' values the same as for clustering_distance_rows.
 #' @param clustering_method clustering method used. Accepts the same values as 
 #' \code{\link{hclust}}.
+#' @param clustering_callback callback function to modify the clustering. Is 
+#' called with two parameters: original \code{hclust} object and the matrix 
+#' used for clustering. Must return a \code{hclust} object.
 #' @param cutree_rows number of clusters the rows are divided into, based on the
 #'  hierarchical clustering (using cutree), if rows are not clustered, the 
 #' argument is ignored
@@ -809,8 +818,25 @@ is.na2 = function(x){
 #' dcols = dist(t(test), method = "minkowski")
 #' pheatmap(test, clustering_distance_rows = drows, clustering_distance_cols = dcols)
 #' 
+#' # Modify ordering of the clusters using clustering callback option
+#' callback = function(hc, mat){
+#'     sv = svd(t(mat))$v[,1]
+#'     dend = reorder(as.dendrogram(hc), wts = sv)
+#'     as.hclust(dend)
+#' }
+#' 
+#' pheatmap(test, clustering_callback = callback)
+#' 
+#' \dontrun{
+#' # Same using dendsort package
+#' library(dendsort)
+#' 
+#' callback = function(hc, ...){dendsort(hc)}
+#' pheatmap(test, clustering_callback = callback)
+#' }
+#' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, ...){
     
     # Set labels
     if(is.null(labels_row)){
@@ -869,6 +895,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     # Do clustering
     if(cluster_rows){
         tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
+        tree_row = clustering_callback(tree_row, mat)
         mat = mat[tree_row$order, , drop = FALSE]
         fmat = fmat[tree_row$order, , drop = FALSE]
         labels_row = labels_row[tree_row$order]
@@ -886,6 +913,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     
     if(cluster_cols){
         tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
+        tree_col = clustering_callback(tree_col, t(mat))
         mat = mat[, tree_col$order, drop = FALSE]
         fmat = fmat[, tree_col$order, drop = FALSE]
         labels_col = labels_col[tree_col$order]
