@@ -7,8 +7,8 @@ Author: Raivo Kolde
 Maintainer: Raivo Kolde <rkolde@gmail.com>
 Depends:
     R (>= 2.0)
-Description: A grid based implementation of heatmaps that offers more control
-    over heatmap dimensions and appearance.
+Description: Implementation of heatmaps that offers more control
+    over dimensions and appearance.
 Imports:
     grid,
     RColorBrewer,
