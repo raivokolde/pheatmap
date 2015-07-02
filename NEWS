@@ -1,3 +1,7 @@
+Version 1.0.7
+-------------------------------------------------------------------------------
+Trying to comply with CRAN policies
+
 Version 1.0.6
 -------------------------------------------------------------------------------
 Added clustering_callback option to give more control over the hierarchical 

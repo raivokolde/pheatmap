@@ -2,6 +2,9 @@
 
 export(pheatmap)
 import(RColorBrewer)
+import(grDevices)
+import(graphics)
 import(grid)
 import(gtable)
 import(scales)
+import(stats)

@@ -10,6 +10,9 @@
 #' @import RColorBrewer
 #' @import scales
 #' @import gtable
+#' @import stats
+#' @import grDevices
+#' @import graphics
 #' 
 #' 
 NA
