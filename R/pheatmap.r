@@ -256,7 +256,7 @@ convert_annotations = function(annotation, annotation_colors){
             if(length(setdiff(setdiff(a, NA), names(b))) > 0){
                 stop(sprintf("Factor levels on variable %s do not match with annotation_colors", colnames(annotation)[i]))
             }
-            new[, i] = b[a]
+            new[, i] = b[match(a, names(b))]
         }
         else{
             a = cut(a, breaks = 100)
