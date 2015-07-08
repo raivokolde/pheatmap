@@ -1,23 +1,27 @@
 lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation_row, annotation_col, annotation_colors, annotation_legend, main, fontsize, fontsize_row, fontsize_col, gaps_row, gaps_col, ...){
     # Get height of colnames and length of rownames
+    coln_height = unit(5, "bigpts")
     if(!is.null(coln[1])){
-        t = c(coln, colnames(annotation_row))
-        longest_coln = which.max(strwidth(t, units = 'in'))
+        longest = which.max(strwidth(coln, units = 'in'))
         gp = list(fontsize = fontsize_col, ...)
-        coln_height = unit(1, "grobheight", textGrob(t[longest_coln], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts")
+        coln_height = max(coln_height, unit(1, "grobheight", textGrob(coln[longest], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts"))
     }
-    else{
-        coln_height = unit(5, "bigpts")
+    if(!is.na2(annotation_row)){
+        longest = which.max(strwidth(colnames(annotation_row), units = 'in'))
+        gp = list(fontsize = fontsize, fontface = 2, ...)
+        coln_height = max(coln_height, unit(1, "grobheight", textGrob(colnames(annotation_row)[longest], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts"))
     }
-    
+
+    rown_width = unit(5, "bigpts")
     if(!is.null(rown[1])){
-        t = c(rown, colnames(annotation_col))
-        longest_rown = which.max(strwidth(t, units = 'in'))
+        longest = which.max(strwidth(rown, units = 'in'))
         gp = list(fontsize = fontsize_row, ...)
-        rown_width = unit(1, "grobwidth", textGrob(t[longest_rown], gp = do.call(gpar, gp))) + unit(10, "bigpts")
+        rown_width = max(rown_width, unit(1, "grobwidth", textGrob(rown[longest], gp = do.call(gpar, gp))) + unit(10, "bigpts"))
     }
-    else{
-        rown_width = unit(5, "bigpts")
+    if(!is.na2(annotation_col)){
+        longest = which.max(strwidth(colnames(annotation_col), units = 'in'))
+        gp = list(fontsize = fontsize, fontface = 2, ...)
+        rown_width = max(rown_width, unit(1, "grobwidth", textGrob(colnames(annotation_col)[longest], gp = do.call(gpar, gp))) + unit(10, "bigpts"))
     }
     
     gp = list(fontsize = fontsize, ...)
