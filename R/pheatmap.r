@@ -18,11 +18,11 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
         gp = list(fontsize = fontsize_row, ...)
         rown_width = max(rown_width, unit(1, "grobwidth", textGrob(rown[longest], gp = do.call(gpar, gp))) + unit(10, "bigpts"))
     }
-    if(!is.na2(annotation_col)){
-        longest = which.max(strwidth(colnames(annotation_col), units = 'in'))
-        gp = list(fontsize = fontsize, fontface = 2, ...)
-        rown_width = max(rown_width, unit(1, "grobwidth", textGrob(colnames(annotation_col)[longest], gp = do.call(gpar, gp))) + unit(10, "bigpts"))
-    }
+    # if(!is.na2(annotation_col)){
+    #     longest = which.max(strwidth(colnames(annotation_col), units = 'in'))
+    #     gp = list(fontsize = fontsize, fontface = 2, ...)
+    #     rown_width = max(rown_width, unit(1, "grobwidth", textGrob(colnames(annotation_col)[longest], gp = do.call(gpar, gp))) + unit(10, "bigpts"))
+    # }
     
     gp = list(fontsize = fontsize, ...)
     # Legend position
