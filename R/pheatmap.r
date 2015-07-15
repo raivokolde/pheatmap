@@ -1,8 +1,13 @@
 lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation_row, annotation_col, annotation_colors, annotation_legend, annotation_names_row, annotation_names_col, main, fontsize, fontsize_row, fontsize_col, gaps_row, gaps_col, ...){
     # Get height of colnames and length of rownames
     if(!is.null(coln[1])){
-        t = c(coln, colnames(annotation_row))
-        longest_coln = which.max(strwidth(t, units = 'in'))
+        t = coln
+        tw = strwidth(t, units = 'in', cex = fontsize_col / fontsize)
+        if(annotation_names_row){
+            t = c(t, colnames(annotation_row))
+            tw = c(tw, strwidth(colnames(annotation_row), units = 'in'))
+        }
+        longest_coln = which.max(tw)
         gp = list(fontsize = fontsize_col, ...)
         coln_height = unit(1, "grobheight", textGrob(t[longest_coln], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
@@ -11,8 +16,13 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     }
     
     if(!is.null(rown[1])){
-        t = c(rown, colnames(annotation_col))
-        longest_rown = which.max(strwidth(t, units = 'in'))
+        t = rown
+        tw = strwidth(t, units = 'in', cex = fontsize_row / fontsize)
+        if(annotation_names_col){
+            t = c(t, colnames(annotation_col))
+            tw = c(tw, strwidth(colnames(annotation_col), units = 'in'))
+        }
+        longest_rown = which.max(tw)
         gp = list(fontsize = fontsize_row, ...)
         rown_width = unit(1, "grobwidth", textGrob(t[longest_rown], gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
