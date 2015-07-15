@@ -8,7 +8,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
             tw = c(tw, strwidth(colnames(annotation_row), units = 'in'))
         }
         longest_coln = which.max(tw)
-        gp = list(fontsize = fontsize_col, ...)
+        gp = list(fontsize = ifelse(longest_coln <= length(coln), fontsize_col, fontsize), ...)
         coln_height = unit(1, "grobheight", textGrob(t[longest_coln], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
     else{
@@ -23,7 +23,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
             tw = c(tw, strwidth(colnames(annotation_col), units = 'in'))
         }
         longest_rown = which.max(tw)
-        gp = list(fontsize = fontsize_row, ...)
+        gp = list(fontsize = ifelse(longest_rown <= length(rown), fontsize_row, fontsize), ...)
         rown_width = unit(1, "grobwidth", textGrob(t[longest_rown], gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
     else{
