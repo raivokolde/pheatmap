@@ -1,7 +1,11 @@
 lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheight_col, treeheight_row, legend, annotation_row, annotation_col, annotation_colors, annotation_legend, annotation_names_row, annotation_names_col, main, fontsize, fontsize_row, fontsize_col, gaps_row, gaps_col, ...){
     # Get height of colnames and length of rownames
-    if(!is.null(coln[1])){
-        t = coln
+    if(!is.null(coln[1]) | (!is.na2(annotation_row) & annotation_names_row)){
+        if(!is.null(coln[1])){
+            t = coln
+        } else {
+            t = ""
+        }
         tw = strwidth(t, units = 'in', cex = fontsize_col / fontsize)
         if(annotation_names_row){
             t = c(t, colnames(annotation_row))
