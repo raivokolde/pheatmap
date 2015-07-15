@@ -666,8 +666,8 @@ identity2 = function(x, ...){
 #' @param scale character indicating if the values should be centered and scaled in 
 #' either the row direction or the column direction, or none. Corresponding values are 
 #' \code{"row"}, \code{"column"} and \code{"none"}
-#' @param cluster_rows boolean values determining if rows should be clustered,
-#' @param cluster_cols boolean values determining if columns should be clustered.
+#' @param cluster_rows boolean values determining if rows should be clustered or \code{hclust} object,
+#' @param cluster_cols boolean values determining if columns should be clustered or \code{hclust} object.
 #' @param clustering_distance_rows distance measure used in clustering rows. Possible 
 #' values are \code{"correlation"} for Pearson correlation and all the distances 
 #' supported by \code{\link{dist}}, such as \code{"euclidean"}, etc. If the value is none 
@@ -836,7 +836,7 @@ identity2 = function(x, ...){
 #' }
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse(cluster_rows, 50, 0), treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, ...){
+pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse((class(cluster_rows) == "hclust") || cluster_rows, 50, 0), treeheight_col = ifelse((class(cluster_cols) == "hclust") || cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, ...){
     
     # Set labels
     if(is.null(labels_row)){
@@ -893,9 +893,13 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     }
     
     # Do clustering
-    if(cluster_rows){
-        tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
-        tree_row = clustering_callback(tree_row, mat)
+    if((class(cluster_rows) == "hclust") || cluster_rows){
+        if(class(cluster_rows) == "hclust"){
+            tree_row = cluster_rows
+        } else {
+            tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
+            tree_row = clustering_callback(tree_row, mat)
+        }
         mat = mat[tree_row$order, , drop = FALSE]
         fmat = fmat[tree_row$order, , drop = FALSE]
         labels_row = labels_row[tree_row$order]
@@ -911,9 +915,13 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         treeheight_row = 0
     }
     
-    if(cluster_cols){
-        tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
-        tree_col = clustering_callback(tree_col, t(mat))
+    if((class(cluster_cols) == "hclust") || cluster_cols){
+        if(class(cluster_cols) == "hclust"){
+            tree_col = cluster_cols
+        } else {
+            tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)
+            tree_col = clustering_callback(tree_col, t(mat))
+        }
         mat = mat[, tree_col$order, drop = FALSE]
         fmat = fmat[, tree_col$order, drop = FALSE]
         labels_col = labels_col[tree_col$order]
