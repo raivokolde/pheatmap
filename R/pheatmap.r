@@ -423,7 +423,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     # Draw title
     if(!is.na(main)){
         elem = draw_main(main, fontsize = 1.3 * fontsize, ...)
-        res = gtable_add_grob(res, elem, t = 1, l = 3, name = "main")
+        res = gtable_add_grob(res, elem, t = 1, l = 3, name = "main", clip = "off")
     }
     
     # Draw tree for the columns
