@@ -503,6 +503,9 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
         res = gtable_add_grob(res, elem, t = t, l = 5, b = 5, clip = "off", name = "legend")
     }
     
+    # Remove unused cols and rows in the table
+    res = gtable_trim(res)
+    
     return(res)
 }
 
