@@ -150,6 +150,8 @@ calculated so that the plot would fit there, unless specified otherwise.}
 
 \item{silent}{do not draw the plot (useful when using the gtable output)}
 
+\item{na_col}{specify the color of the NA cell in the matrix.}
+
 \item{\dots}{graphical parameters for the text used in plot. Parameters passed to
 \code{\link{grid.text}}, see \code{\link{gpar}}.}
 }
