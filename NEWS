@@ -1,3 +1,9 @@
+Version 1.0.8
+-------------------------------------------------------------------------------
+Introduced changes by Tauno Metsalu:
+* It is now possible to use hclust as an object 
+* the display of annotation names can be controlled in more detail now
+
 Version 1.0.7
 -------------------------------------------------------------------------------
 Trying to comply with CRAN policies

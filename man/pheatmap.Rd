@@ -10,17 +10,18 @@ pheatmap(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name =
   cluster_cols = TRUE, clustering_distance_rows = "euclidean",
   clustering_distance_cols = "euclidean", clustering_method = "complete",
   clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,
-  treeheight_row = ifelse(cluster_rows, 50, 0),
-  treeheight_col = ifelse(cluster_cols, 50, 0), legend = TRUE,
-  legend_breaks = NA, legend_labels = NA, annotation_row = NA,
-  annotation_col = NA, annotation = NA, annotation_colors = NA,
-  annotation_legend = TRUE, drop_levels = TRUE, show_rownames = T,
-  show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize,
-  fontsize_col = fontsize, display_numbers = F, number_format = "\%.2f",
-  number_color = "grey30", fontsize_number = 0.8 * fontsize,
-  gaps_row = NULL, gaps_col = NULL, labels_row = NULL,
-  labels_col = NULL, filename = NA, width = NA, height = NA,
-  silent = FALSE, ...)
+  treeheight_row = ifelse((class(cluster_rows) == "hclust") || cluster_rows,
+  50, 0), treeheight_col = ifelse((class(cluster_cols) == "hclust") ||
+  cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA,
+  legend_labels = NA, annotation_row = NA, annotation_col = NA,
+  annotation = NA, annotation_colors = NA, annotation_legend = TRUE,
+  annotation_names_row = TRUE, annotation_names_col = TRUE,
+  drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA,
+  fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize,
+  display_numbers = F, number_format = "\%.2f", number_color = "grey30",
+  fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL,
+  labels_row = NULL, labels_col = NULL, filename = NA, width = NA,
+  height = NA, silent = FALSE, ...)
 }
 \arguments{
 \item{mat}{numeric matrix of the values to be plotted.}
@@ -48,9 +49,9 @@ then the values depend on the size of plotting window.}
 either the row direction or the column direction, or none. Corresponding values are
 \code{"row"}, \code{"column"} and \code{"none"}}
 
-\item{cluster_rows}{boolean values determining if rows should be clustered,}
+\item{cluster_rows}{boolean values determining if rows should be clustered or \code{hclust} object,}
 
-\item{cluster_cols}{boolean values determining if columns should be clustered.}
+\item{cluster_cols}{boolean values determining if columns should be clustered or \code{hclust} object.}
 
 \item{clustering_distance_rows}{distance measure used in clustering rows. Possible
 values are \code{"correlation"} for Pearson correlation and all the distances
@@ -100,6 +101,12 @@ annotation_col track colors manually. It is  possible to define the colors
 for only some of the features. Check examples for  details.}
 
 \item{annotation_legend}{boolean value showing if the legend for annotation
+tracks should be drawn.}
+
+\item{annotation_names_row}{boolean value showing if the names for row annotation
+tracks should be drawn.}
+
+\item{annotation_names_col}{boolean value showing if the names for column annotation
 tracks should be drawn.}
 
 \item{drop_levels}{logical to determine if unused levels are also shown in
