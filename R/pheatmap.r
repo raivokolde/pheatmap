@@ -752,6 +752,7 @@ identity2 = function(x, ...){
 #' @param width manual option for determining the output file width in inches.
 #' @param height manual option for determining the output file height in inches.
 #' @param silent do not draw the plot (useful when using the gtable output)
+#' @param na_col specify the color of the NA cell in the matrix.
 #' @param \dots graphical parameters for the text used in plot. Parameters passed to 
 #' \code{\link{grid.text}}, see \code{\link{gpar}}. 
 #' 
