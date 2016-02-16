@@ -119,8 +119,9 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     if(is.na(cellwidth)){
         width_for_rn = unit(1, "npc") - legend_width - treeheight_row - annot_row_width - annot_legend_width
         rown_factor = convertWidth(rown_width - unit(10, "bigpts"), "inches", valueOnly = T) /
-            convertWidth(width_for_rn - unit(10, "bigpts"), "inches", valueOnly = T) * 1.01
+            convertWidth(width_for_rn - unit(10, "bigpts"), "inches", valueOnly = T)
         if(rown_factor > 1){
+            rown_factor = rown_factor * 1.01
             rown_width = unit(convertWidth(rown_width - unit(10, "bigpts"), "inches", valueOnly = T) / rown_factor, "in") + unit(10, "bigpts")
             fontsize_row = fontsize_row / rown_factor
         }
@@ -133,8 +134,9 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     if(is.na(cellheight)){
         height_for_cn = unit(1, "npc") - main_height - treeheight_col - annot_col_height
         coln_factor = convertHeight(coln_height - unit(10, "bigpts"), "inches", valueOnly = T) / 
-            convertHeight(height_for_cn - unit(10, "bigpts"), "inches", valueOnly = T) * 1.01
+            convertHeight(height_for_cn - unit(10, "bigpts"), "inches", valueOnly = T)
         if(coln_factor > 1){
+            coln_factor = coln_factor * 1.01
             coln_height = unit(convertHeight(coln_height - unit(10, "bigpts"), "inches", valueOnly = T) / coln_factor, "in") + unit(10, "bigpts")
             fontsize_col = fontsize_col / coln_factor
         }
