@@ -117,14 +117,28 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     
     # Set cell sizes
     if(is.na(cellwidth)){
-        mat_width = unit(1, "npc") - rown_width - legend_width - treeheight_row - annot_row_width - annot_legend_width 
+        width_for_rn = unit(1, "npc") - legend_width - treeheight_row - annot_row_width - annot_legend_width
+        rown_factor = convertWidth(rown_width - unit(10, "bigpts"), "inches", valueOnly = T) /
+            convertWidth(width_for_rn - unit(10, "bigpts"), "inches", valueOnly = T) * 1.01
+        if(rown_factor > 1){
+            rown_width = unit(convertWidth(rown_width - unit(10, "bigpts"), "inches", valueOnly = T) / rown_factor, "in") + unit(10, "bigpts")
+            fontsize_row = fontsize_row / rown_factor
+        }
+        mat_width = width_for_rn - rown_width
     }
     else{
         mat_width = unit(cellwidth * ncol, "bigpts") + length(gaps_col) * unit(4, "bigpts")
     }
     
     if(is.na(cellheight)){
-        mat_height = unit(1, "npc") - main_height - coln_height - treeheight_col - annot_col_height
+        height_for_cn = unit(1, "npc") - main_height - treeheight_col - annot_col_height
+        coln_factor = convertHeight(coln_height - unit(10, "bigpts"), "inches", valueOnly = T) / 
+            convertHeight(height_for_cn - unit(10, "bigpts"), "inches", valueOnly = T) * 1.01
+        if(coln_factor > 1){
+            coln_height = unit(convertHeight(coln_height - unit(10, "bigpts"), "inches", valueOnly = T) / coln_factor, "in") + unit(10, "bigpts")
+            fontsize_col = fontsize_col / coln_factor
+        }
+        mat_height = height_for_cn - coln_height
     }
     else{
         mat_height = unit(cellheight * nrow, "bigpts") + length(gaps_row) * unit(4, "bigpts")
@@ -139,7 +153,8 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     # Return minimal cell dimension in bigpts to decide if borders are drawn
     mindim = min(cw, ch) 
     
-    res = list(gt = gt, mindim = mindim, fontsize_annotation_legend = fontsize_annotation_legend)
+    res = list(gt = gt, mindim = mindim, fontsize_annotation_legend = fontsize_annotation_legend,
+        fontsize_row = fontsize_row, fontsize_col = fontsize_col)
     
     return(res)
 }
@@ -399,6 +414,8 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     
     res = lo$gt
     mindim = lo$mindim
+    fontsize_row = lo$fontsize_row
+    fontsize_col = lo$fontsize_col
     
     if(!is.na(filename)){
         if(is.na(height)){
