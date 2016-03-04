@@ -218,20 +218,20 @@ draw_matrix = function(matrix, border_color, gaps_rows, gaps_cols, fmat, fontsiz
     return(res)
 }
 
-draw_colnames = function(coln, gaps, ...){
+draw_colnames = function(coln, gaps, rot, vjust, hjust, ...){
     coord = find_coordinates(length(coln), gaps)
     x = coord$coord - 0.5 * coord$size
     
-    res = textGrob(coln, x = x, y = unit(1, "npc") - unit(3, "bigpts"), vjust = 0.5, hjust = 0, rot = 270, gp = gpar(...))
+    res = textGrob(coln, x = x, y = unit(1, "npc") - unit(3, "bigpts"), vjust = vjust, hjust = hjust, rot = rot, gp = gpar(...))
     
     return(res)
 }
 
-draw_rownames = function(rown, gaps, ...){
+draw_rownames = function(rown, gaps, rot, vjust, hjust, ...){
     coord = find_coordinates(length(rown), gaps)
     y = unit(1, "npc") - (coord$coord - 0.5 * coord$size)
     
-    res = textGrob(rown, x = unit(3, "bigpts"), y = y, vjust = 0.5, hjust = 0, gp = gpar(...))
+    res = textGrob(rown, x = unit(3, "bigpts"), y = y, vjust = vjust, hjust = hjust, rot = rot, gp = gpar(...))
     
     return(res)
 }
@@ -375,7 +375,7 @@ vplayout = function(x, y){
     return(viewport(layout.pos.row = x, layout.pos.col = y))
 }
 
-heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation_row, annotation_col, annotation_colors, annotation_legend, annotation_names_row, annotation_names_col, main, fontsize, fontsize_row, fontsize_col, fmat, fontsize_number, number_color, gaps_col, gaps_row, labels_row, labels_col, ...){
+heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, tree_row, treeheight_col, treeheight_row, filename, width, height, breaks, color, legend, annotation_row, annotation_col, annotation_colors, annotation_legend, annotation_names_row, annotation_names_col, main, fontsize, fontsize_row, fontsize_col, fmat, fontsize_number, number_color, gaps_col, gaps_row, labels_row, labels_col, rot_row, rot_col, vjust_row, hjust_row, vjust_col, hjust_col, ...){
     # Set layout
     lo = lo(coln = labels_col, rown = labels_row, nrow = nrow(matrix), ncol = ncol(matrix), cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, legend = legend, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, gaps_row = gaps_row, gaps_col = gaps_col,  ...)
     
@@ -410,7 +410,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
         # gt = heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, annotation_legend = annotation_legend, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number =  fontsize_number, number_color = number_color, labels_row = labels_row, labels_col = labels_col, gaps_col = gaps_col, gaps_row = gaps_row, ...)
 
         f(filename, height = height, width = width)
-        gt = heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number =  fontsize_number, number_color = number_color, labels_row = labels_row, labels_col = labels_col, gaps_col = gaps_col, gaps_row = gaps_row, ...)
+        gt = heatmap_motor(matrix, cellwidth = cellwidth, cellheight = cellheight, border_color = border_color, tree_col = tree_col, tree_row = tree_row, treeheight_col = treeheight_col, treeheight_row = treeheight_row, breaks = breaks, color = color, legend = legend, annotation_col = annotation_col, annotation_row = annotation_row, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, filename = NA, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number =  fontsize_number, number_color = number_color, labels_row = labels_row, labels_col = labels_col, gaps_col = gaps_col, gaps_row = gaps_row, rot_row = rot_row, rot_col = rot_col, vjust_row = vjust_row, hjust_row = hjust_row, vjust_col = vjust_col, hjust_col = hjust_col, ...)
         grid.draw(gt)
         dev.off()
         
@@ -444,14 +444,14 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     
     # Draw colnames
     if(length(labels_col) != 0){
-        pars = list(labels_col, gaps = gaps_col, fontsize = fontsize_col, ...)
+        pars = list(labels_col, gaps = gaps_col, fontsize = fontsize_col, rot = rot_col, vjust = vjust_col, hjust = hjust_col, ...)
         elem = do.call(draw_colnames, pars)
         res = gtable_add_grob(res, elem, t = 5, l = 3, clip = "off", name = "col_names")
     }
     
     # Draw rownames
     if(length(labels_row) != 0){
-        pars = list(labels_row, gaps = gaps_row, fontsize = fontsize_row, ...)
+        pars = list(labels_row, gaps = gaps_row, fontsize = fontsize_row, rot = rot_row, vjust = vjust_row, hjust = hjust_row, ...)
         elem = do.call(draw_rownames, pars)
         res = gtable_add_grob(res, elem, t = 4, l = 4, clip = "off", name = "row_names")
     }
@@ -757,6 +757,12 @@ identity2 = function(x, ...){
 #' @param gaps_col similar to gaps_row, but for columns.
 #' @param labels_row custom labels for rows that are used instead of rownames.
 #' @param labels_col similar to labels_row, but for columns.
+#' @param rot_row the angle to rotate the rownames
+#' @param rot_col the anle to rotate the colnames
+#' @param hjust_row hjust parameter for rownames
+#' @param vjust_row vjust parameter for rownames
+#' @param hjust_col hjust parameter for colnames
+#' @param vjust_col vjust parameter for colnames
 #' @param filename file path where to save the picture. Filetype is decided by 
 #' the extension in the path. Currently following formats are supported: png, pdf, tiff,
 #'  bmp, jpeg. Even if the plot does not fit into the plotting window, the file size is 
@@ -847,6 +853,9 @@ identity2 = function(x, ...){
 #' 
 #' pheatmap(test, annotation_col = annotation_col, labels_row = labels_row)
 #' 
+#' # Rotate colnames
+#' pheatmap(test, rot_col = 0, hjust_col = 0.5, vjust_col = 1)
+#' 
 #' # Specifying clustering from distance matrix
 #' drows = dist(test, method = "minkowski")
 #' dcols = dist(t(test), method = "minkowski")
@@ -870,7 +879,7 @@ identity2 = function(x, ...){
 #' }
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse((class(cluster_rows) == "hclust") || cluster_rows, 50, 0), treeheight_col = ifelse((class(cluster_cols) == "hclust") || cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, annotation_names_row = TRUE, annotation_names_col = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, na_col = "#DDDDDD", ...){
+pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse((class(cluster_rows) == "hclust") || cluster_rows, 50, 0), treeheight_col = ifelse((class(cluster_cols) == "hclust") || cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, annotation_names_row = TRUE, annotation_names_col = TRUE, drop_levels = TRUE, show_rownames = TRUE, show_colnames = TRUE, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, display_numbers = FALSE, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, rot_row = 0, rot_col = 270, vjust_row = 0.5, hjust_row = 0, vjust_col = 0.5, hjust_col = 0, filename = NA, width = NA, height = NA, silent = FALSE, na_col = "#DDDDDD", ...){
     
     # Set labels
     if(is.null(labels_row)){
@@ -879,6 +888,16 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     if(is.null(labels_col)){
         labels_col = colnames(mat)
     }
+  
+  # Check text rotation for row & col labels
+  if (any(!is.numeric(rot_row), !is.numeric(rot_col))){
+    stop("Text rotation for rows and columns must be set using numeric values")
+  }
+  
+  # Check vjust & hjust for row & col labels
+  if (any(!is.numeric(vjust_row), !is.numeric(vjust_col), !is.numeric(hjust_row), !is.numeric(hjust_col))){
+    stop("vjust and hjust must be set using numeric values")
+  }
     
     # Preprocess matrix
     mat = as.matrix(mat)
@@ -1035,7 +1054,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     }
     
     # Draw heatmap
-    gt = heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number = fontsize_number, number_color = number_color, gaps_row = gaps_row, gaps_col = gaps_col, labels_row = labels_row, labels_col = labels_col, ...)
+    gt = heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number = fontsize_number, number_color = number_color, gaps_row = gaps_row, gaps_col = gaps_col, labels_row = labels_row, labels_col = labels_col, rot_row = rot_row, rot_col = rot_col, vjust_row = vjust_row, hjust_row = hjust_row, vjust_col = vjust_col, hjust_col = hjust_col, ...)
     
     if(is.na(filename) & !silent){
         grid.newpage()
