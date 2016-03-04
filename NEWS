@@ -1,3 +1,8 @@
+Version 1.0.9
+-------------------------------------------------------------------------------
+* Now using pheatmap does not interfer with random seed anymore (thanks Simon 
+ de Bernard) 
+
 Version 1.0.8
 -------------------------------------------------------------------------------
 Introduced changes by Tauno Metsalu:

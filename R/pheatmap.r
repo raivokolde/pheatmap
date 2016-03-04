@@ -584,6 +584,10 @@ generate_annotation_colours = function(annotation, annotation_colors, drop){
     
     factor_colors = dscale(factor(1:count), hue_pal(l = 75))
     
+    oldseed = NULL 
+    if (exists(".Random.seed")) 
+    oldseed = get(".Random.seed", pos=.GlobalEnv) 
+    
     set.seed(3453)
     
     cont_counter = 2
@@ -611,6 +615,14 @@ generate_annotation_colours = function(annotation, annotation_colors, drop){
             }
         }
     }
+    
+    if(!is.null(oldseed)){ 
+        assign(".Random.seed", oldseed, pos=.GlobalEnv) 
+    } 
+    else{ 
+        remove(.Random.seed, pos=.GlobalEnv) 
+    }
+    
     return(annotation_colors)
 }
 
