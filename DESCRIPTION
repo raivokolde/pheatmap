@@ -19,3 +19,4 @@ Imports:
     graphics
 License: GPL-2
 LazyLoad: yes
+RoxygenNote: 6.0.1

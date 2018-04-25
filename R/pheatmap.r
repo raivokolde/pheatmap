@@ -1046,3 +1046,14 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
 }
 
 
+##' @method grid.draw pheatmap
+##' @export
+grid.draw.pheatmap <- function(x, recording = TRUE) {
+    grid.draw(x$gtable)
+}
+
+##' @method print pheatmap
+##' @export
+print.pheatmap <- function(x, ...) {
+    grid.draw(x)
+}
