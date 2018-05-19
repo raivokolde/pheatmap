@@ -1,3 +1,11 @@
+Version 1.0.10
+-------------------------------------------------------------------------------
+* Fixed the blank page issue for RMarkdown notebooks and printing heatmaps to 
+pdf without using filename parameter
+* Can set color of NA now
+* Output now is a pheatmap object with same slots as previously, but it has 
+also print and grid.draw functions (thanks Guangchuang Yu)
+
 Version 1.0.9
 -------------------------------------------------------------------------------
 * Now using pheatmap does not interfer with random seed anymore (thanks Simon 

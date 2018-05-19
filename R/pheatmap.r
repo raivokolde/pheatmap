@@ -769,12 +769,14 @@ identity2 = function(x, ...){
 #' \code{\link{grid.text}}, see \code{\link{gpar}}. 
 #' 
 #' @return 
-#' Invisibly a list of components 
+#' Invisibly a \code{pheatmap} object that is a list with components 
 #' \itemize{
 #'     \item \code{tree_row} the clustering of rows as \code{\link{hclust}} object 
 #'     \item \code{tree_col} the clustering of columns as \code{\link{hclust}} object
 #'     \item \code{kmeans} the kmeans clustering of rows if parameter \code{kmeans_k} was 
 #' specified 
+#'     \item \code{gtable} a \code{\link{gtable}} object containing the heatmap, 
+#'     can be used for combining the heatmap with other plots 
 #' }
 #' 
 #' @author  Raivo Kolde <rkolde@@gmail.com>
@@ -1035,7 +1037,9 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     }
     
     # Draw heatmap
+    pdf(file = NULL)
     gt = heatmap_motor(mat, border_color = border_color, cellwidth = cellwidth, cellheight = cellheight, treeheight_col = treeheight_col, treeheight_row = treeheight_row, tree_col = tree_col, tree_row = tree_row, filename = filename, width = width, height = height, breaks = breaks, color = color, legend = legend, annotation_row = annotation_row, annotation_col = annotation_col, annotation_colors = annotation_colors, annotation_legend = annotation_legend, annotation_names_row = annotation_names_row, annotation_names_col = annotation_names_col, main = main, fontsize = fontsize, fontsize_row = fontsize_row, fontsize_col = fontsize_col, fmat = fmat, fontsize_number = fontsize_number, number_color = number_color, gaps_row = gaps_row, gaps_col = gaps_col, labels_row = labels_row, labels_col = labels_col, ...)
+    dev.off()
     
     if(is.na(filename) & !silent){
         grid.newpage()
@@ -1046,14 +1050,14 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
 }
 
 
-##' @method grid.draw pheatmap
-##' @export
+#' @method grid.draw pheatmap
+#' @export
 grid.draw.pheatmap <- function(x, recording = TRUE) {
     grid.draw(x$gtable)
 }
 
-##' @method print pheatmap
-##' @export
+#' @method print pheatmap
+#' @export
 print.pheatmap <- function(x, ...) {
     grid.draw(x)
 }
