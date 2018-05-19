@@ -1042,7 +1042,18 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         grid.draw(gt)
     }
     
-    invisible(list(tree_row = tree_row, tree_col = tree_col, kmeans = km, gtable = gt))
+    invisible(structure(list(tree_row = tree_row, tree_col = tree_col, kmeans = km, gtable = gt), class = "pheatmap"))
 }
 
 
+##' @method grid.draw pheatmap
+##' @export
+grid.draw.pheatmap <- function(x, recording = TRUE) {
+    grid.draw(x$gtable)
+}
+
+##' @method print pheatmap
+##' @export
+print.pheatmap <- function(x, ...) {
+    grid.draw(x)
+}
