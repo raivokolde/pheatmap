@@ -1,3 +1,9 @@
+Version 1.0.11
+-------------------------------------------------------------------------------
+* Now values outside of provided breaks correspond to highese/lowest supplied 
+color (thanks Manuela Hummel)
+
+
 Version 1.0.10
 -------------------------------------------------------------------------------
 * Fixed the blank page issue for RMarkdown notebooks and printing heatmaps to 

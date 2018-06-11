@@ -237,6 +237,9 @@ draw_rownames = function(rown, gaps, ...){
 }
 
 draw_legend = function(color, breaks, legend, ...){
+    color = color[!is.infinite(breaks)]
+    breaks = breaks[!is.infinite(breaks)]
+    
     height = min(unit(1, "npc"), unit(150, "bigpts"))
     
     legend_pos = (legend - min(breaks)) / (max(breaks) - min(breaks))
@@ -986,15 +989,26 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     if(is.na2(breaks)){
         breaks = generate_breaks(as.vector(mat), length(color))
     }
+    
+    if(!is.infinite(min(breaks))){
+        breaks = c(-Inf, breaks)
+        color = c(color[1], color)
+    }
+    if(!is.infinite(max(breaks))){
+        breaks = c(breaks, Inf)
+        color = c(color, color[length(color)])
+    }
+    non_inf_breaks = breaks[!is.infinite(breaks)]
+    
     if (legend & is.na2(legend_breaks)) {
-        legend = grid.pretty(range(as.vector(breaks)))
+        legend = grid.pretty(range(as.vector(non_inf_breaks)))
         names(legend) = legend
     }
     else if(legend & !is.na2(legend_breaks)){
-        legend = legend_breaks[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
+        legend = legend_breaks[legend_breaks >= min(non_inf_breaks) & legend_breaks <= max(non_inf_breaks)]
         
         if(!is.na2(legend_labels)){
-            legend_labels = legend_labels[legend_breaks >= min(breaks) & legend_breaks <= max(breaks)]
+            legend_labels = legend_labels[legend_breaks >= min(non_inf_breaks) & legend_breaks <= max(non_inf_breaks)]
             names(legend) = legend_labels
         }
         else{
@@ -1004,6 +1018,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     else {
         legend = NA
     }
+    
     mat = scale_colours(mat, col = color, breaks = breaks, na_col = na_col)
     
     # Preparing annotations
