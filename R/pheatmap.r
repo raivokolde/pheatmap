@@ -688,7 +688,9 @@ identity2 = function(x, ...){
 #' @param breaks a sequence of numbers that covers the range of values in mat and is one 
 #' element longer than color vector. Used for mapping values to colors. Useful, if needed 
 #' to map certain values to certain colors, to certain values. If value is NA then the 
-#' breaks are calculated automatically.
+#' breaks are calculated automatically. When breaks do not cover tha range of values, 
+#' then any value larger than \code{max(breaks)} will have the largest color and any value 
+#' lower than\code{ min(breaks)} will get the lowest color.
 #' @param border_color color of cell borders on heatmap, use NA if no border should be 
 #' drawn.
 #' @param cellwidth individual cell width in points. If left as NA, then the values 
