@@ -12,7 +12,8 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
             tw = c(tw, strwidth(colnames(annotation_row), units = 'in'))
         }
         longest_coln = which.max(tw)
-        gp = list(fontsize = ifelse(longest_coln <= length(coln), fontsize_col, fontsize), ...)
+        gp = list(fontsize = ifelse(longest_coln <= length(coln), fontsize_col, fontsize), 
+            fontface = ifelse(longest_coln <= length(coln), 1, 2), ...)
         coln_height = unit(1, "grobheight", textGrob(t[longest_coln], rot = 90, gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
     else{
@@ -27,7 +28,8 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
             tw = c(tw, strwidth(colnames(annotation_col), units = 'in'))
         }
         longest_rown = which.max(tw)
-        gp = list(fontsize = ifelse(longest_rown <= length(rown), fontsize_row, fontsize), ...)
+        gp = list(fontsize = ifelse(longest_rown <= length(rown), fontsize_row, fontsize), 
+            fontface = ifelse(longest_rown <= length(rown), 1, 2), ...)
         rown_width = unit(1, "grobwidth", textGrob(t[longest_rown], gp = do.call(gpar, gp))) + unit(10, "bigpts")
     }
     else{
@@ -62,16 +64,19 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
         # Column annotation height 
         annot_col_height = ncol(annotation_col) * (textheight + unit(2, "bigpts")) + unit(2, "bigpts")
         
-        # Width of the correponding legend
+        # Width of the correponding legend and number of legend rows (boxes) for each annotation
         t = c(as.vector(as.matrix(annotation_col)), colnames(annotation_col)) 
         annot_col_legend_width = unit(1.2, "grobwidth", textGrob(t[which.max(nchar(t))], gp = gpar(...))) + unit(12, "bigpts")
+        annot_col_legend_rows = sapply(annotation_col, function(x) ifelse(class(x) %in% c("factor", "character"), length(unique(x)), 4))
         if(!annotation_legend){
             annot_col_legend_width = unit(0, "npc")
+            annot_col_legend_rows = NULL
         }
     }
     else{
         annot_col_height = unit(0, "bigpts")
         annot_col_legend_width = unit(0, "bigpts")
+        annot_col_legend_rows = NULL
     }
     
     # Row annotations
@@ -79,23 +84,36 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
         # Row annotation width 
         annot_row_width = ncol(annotation_row) * (textheight + unit(2, "bigpts")) + unit(2, "bigpts")
         
-        # Width of the correponding legend
+        # Width of the correponding legend and number of legend rows (boxes) for each annotation
         t = c(as.vector(as.matrix(annotation_row)), colnames(annotation_row)) 
         annot_row_legend_width = unit(1.2, "grobwidth", textGrob(t[which.max(nchar(t))], gp = gpar(...))) + unit(12, "bigpts")
+        annot_row_legend_rows = sapply(annotation_row, function(x) ifelse(class(x) %in% c("factor", "character"), length(unique(x)), 4))
         if(!annotation_legend){
             annot_row_legend_width = unit(0, "npc")
+            annot_row_legend_rows = NULL
         }
     }
     else{
         annot_row_width = unit(0, "bigpts")
         annot_row_legend_width = unit(0, "bigpts")
+        annot_row_legend_rows = NULL
     }
     
     annot_legend_width = max(annot_row_legend_width, annot_col_legend_width)
+    annot_legend_rows = c(annot_col_legend_rows, annot_row_legend_rows)
+    annot_text_height = unit(1, "grobheight", textGrob("FGH", gp = gpar(fontsize = fontsize)))
+    annot_legend_height = (3 * length(annot_legend_rows) + 2 * sum(annot_legend_rows)) * annot_text_height
     
     # Tree height
     treeheight_col = unit(treeheight_col, "bigpts") + unit(5, "bigpts")
     treeheight_row = unit(treeheight_row, "bigpts") + unit(5, "bigpts") 
+    
+    # If annotation legend is too long, decrease font size for annotation legend
+    legend_space = unit(1, "npc") - main_height - treeheight_col
+    if(is.null(rown[1])) legend_space = legend_space - annot_col_height
+    font_scale_factor = convertHeight(annot_legend_height, "inches", valueOnly = TRUE) / 
+        convertHeight(legend_space, "inches", valueOnly = TRUE)
+    fontsize_annotation_legend = ifelse(font_scale_factor > 1, fontsize / font_scale_factor, fontsize)
     
     # Set cell sizes
     if(is.na(cellwidth)){
@@ -121,7 +139,7 @@ lo = function(rown, coln, nrow, ncol, cellheight = NA, cellwidth = NA, treeheigh
     # Return minimal cell dimension in bigpts to decide if borders are drawn
     mindim = min(cw, ch) 
     
-    res = list(gt = gt, mindim = mindim)
+    res = list(gt = gt, mindim = mindim, fontsize_annotation_legend = fontsize_annotation_legend)
     
     return(res)
 }
@@ -492,7 +510,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
     annotation = annotation[unlist(lapply(annotation, function(x) !is.na2(x)))]
     
     if(length(annotation) > 0 & annotation_legend){
-        elem = draw_annotation_legend(annotation, annotation_colors, border_color, fontsize = fontsize, ...)
+        elem = draw_annotation_legend(annotation, annotation_colors, border_color, fontsize = lo$fontsize_annotation_legend, ...)
         
         t = ifelse(is.null(labels_row), 4, 3)
         res = gtable_add_grob(res, elem, t = t, l = 6, b = 5, clip = "off", name = "annotation_legend")
