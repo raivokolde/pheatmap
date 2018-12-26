@@ -29,13 +29,13 @@ pheatmap(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name =
 
 \item{color}{vector of colors used in heatmap.}
 
-\item{kmeans_k}{the number of kmeans clusters to make, if we want to agggregate the 
+\item{kmeans_k}{the number of kmeans clusters to make, if we want to aggregate the 
 rows before drawing heatmap. If NA then the rows are not aggregated.}
 
 \item{breaks}{a sequence of numbers that covers the range of values in mat and is one 
 element longer than color vector. Used for mapping values to colors. Useful, if needed 
 to map certain values to certain colors, to certain values. If value is NA then the 
-breaks are calculated automatically. When breaks do not cover tha range of values, 
+breaks are calculated automatically. When breaks do not cover the range of values, 
 then any value larger than \code{max(breaks)} will have the largest color and any value 
 lower than\code{ min(breaks)} will get the lowest color.}
 
@@ -142,7 +142,7 @@ notation (see more in \code{\link{sprintf}}).}
 
 \item{fontsize_number}{fontsize of the numbers displayed in cells}
 
-\item{gaps_row}{vector of row indices that show shere to put gaps into
+\item{gaps_row}{vector of row indices that show where to put gaps into
 heatmap. Used only if the rows are not clustered. See \code{cutree_row}
 to see how to introduce gaps to clustered rows.}
 

@@ -683,12 +683,12 @@ identity2 = function(x, ...){
 #'
 #' @param mat numeric matrix of the values to be plotted.
 #' @param color vector of colors used in heatmap.
-#' @param kmeans_k the number of kmeans clusters to make, if we want to agggregate the 
+#' @param kmeans_k the number of kmeans clusters to make, if we want to aggregate the 
 #' rows before drawing heatmap. If NA then the rows are not aggregated.
 #' @param breaks a sequence of numbers that covers the range of values in mat and is one 
 #' element longer than color vector. Used for mapping values to colors. Useful, if needed 
 #' to map certain values to certain colors, to certain values. If value is NA then the 
-#' breaks are calculated automatically. When breaks do not cover tha range of values, 
+#' breaks are calculated automatically. When breaks do not cover the range of values, 
 #' then any value larger than \code{max(breaks)} will have the largest color and any value 
 #' lower than\code{ min(breaks)} will get the lowest color.
 #' @param border_color color of cell borders on heatmap, use NA if no border should be 
@@ -758,7 +758,7 @@ identity2 = function(x, ...){
 #' notation (see more in \code{\link{sprintf}}).
 #' @param number_color color of the text    
 #' @param fontsize_number fontsize of the numbers displayed in cells
-#' @param gaps_row vector of row indices that show shere to put gaps into
+#' @param gaps_row vector of row indices that show where to put gaps into
 #'  heatmap. Used only if the rows are not clustered. See \code{cutree_row}
 #'  to see how to introduce gaps to clustered rows. 
 #' @param gaps_col similar to gaps_row, but for columns.
