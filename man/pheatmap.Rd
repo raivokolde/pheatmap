@@ -235,6 +235,9 @@ pheatmap(test, annotation_col = annotation_col)
 pheatmap(test, annotation_col = annotation_col, annotation_legend = FALSE)
 pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row)
 
+# Change angle of text in the columns
+pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row, angle_col = "45")
+pheatmap(test, annotation_col = annotation_col, angle_col = "0")
 
 # Specify colors
 ann_colors = list(
