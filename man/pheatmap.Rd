@@ -18,10 +18,11 @@ pheatmap(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name =
   annotation_names_row = TRUE, annotation_names_col = TRUE,
   drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA,
   fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize,
-  display_numbers = F, number_format = "\%.2f", number_color = "grey30",
-  fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL,
-  labels_row = NULL, labels_col = NULL, filename = NA, width = NA,
-  height = NA, silent = FALSE, na_col = "#DDDDDD", ...)
+  angle_col = c("270", "0", "45", "90", "315"), display_numbers = F,
+  number_format = "\%.2f", number_color = "grey30", fontsize_number = 0.8
+  * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL,
+  labels_col = NULL, filename = NA, width = NA, height = NA,
+  silent = FALSE, na_col = "#DDDDDD", ...)
 }
 \arguments{
 \item{mat}{numeric matrix of the values to be plotted.}
@@ -125,6 +126,9 @@ the legend}
 \item{fontsize_row}{fontsize for rownames (Default: fontsize)}
 
 \item{fontsize_col}{fontsize for colnames (Default: fontsize)}
+
+\item{angle_col}{angle of the column labels, right now one can choose only from few 
+predefined options (0, 45, 90, 270 and 315)}
 
 \item{display_numbers}{logical determining if the numeric values are also printed to 
 the cells. If this is a matrix (with same dimensions as original matrix), the contents

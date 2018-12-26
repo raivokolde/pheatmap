@@ -1,8 +1,11 @@
+Version 1.0.12
+-------------------------------------------------------------------------------
+* New option angle_col that allows to change the orientation of column labels
+
 Version 1.0.11
 -------------------------------------------------------------------------------
 * Now values outside of provided breaks correspond to highese/lowest supplied 
 color (thanks Manuela Hummel)
-
 
 Version 1.0.10
 -------------------------------------------------------------------------------
