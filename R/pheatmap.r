@@ -210,7 +210,7 @@ draw_matrix = function(matrix, border_color, gaps_rows, gaps_cols, fmat, fontsiz
     res[["rect"]] = rectGrob(x = coord$x, y = coord$y, width = coord_x$size, height = coord_y$size, gp = gpar(fill = matrix, col = border_color))
     
     if(attr(fmat, "draw")){
-        res[["text"]] = textGrob(x = coord$x, y = coord$y, label = fmat, gp = gpar(col = number_color, fontsize = fontsize_number))
+        res[["text"]] = textGrob(x = coord$x, y = coord$y, label = fmat, gp = gpar(col = if(is.function(number_color)) number_color(matrix) else number_color, fontsize = fontsize_number))
     }
     
     res = gTree(children = res)
@@ -756,7 +756,8 @@ identity2 = function(x, ...){
 #' @param number_format format strings (C printf style) of the numbers shown in cells. 
 #' For example "\code{\%.2f}" shows 2 decimal places and "\code{\%.1e}" shows exponential 
 #' notation (see more in \code{\link{sprintf}}).
-#' @param number_color color of the text    
+#' @param number_color color of the text. If this is a function, it is applied to the
+#' color of each cell, allowing to change text color based on background color.
 #' @param fontsize_number fontsize of the numbers displayed in cells
 #' @param gaps_row vector of row indices that show where to put gaps into
 #'  heatmap. Used only if the rows are not clustered. See \code{cutree_row}
