@@ -760,8 +760,7 @@ identity2 = function(x, ...){
 #' color of each cell, allowing to change text color based on background color.
 #' @param fontsize_number fontsize of the numbers displayed in cells
 #' @param gaps_row vector of row indices that show where to put gaps into
-#'  heatmap. Used only if the rows are not clustered. See \code{cutree_row}
-#'  to see how to introduce gaps to clustered rows. 
+#' heatmap. When rows are clustered, it is overriden by \code{cutree_rows} if set.
 #' @param gaps_col similar to gaps_row, but for columns.
 #' @param labels_row custom labels for rows that are used instead of rownames.
 #' @param labels_col similar to labels_row, but for columns.
@@ -953,9 +952,6 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         if(!is.na(cutree_rows)){
             gaps_row = find_gaps(tree_row, cutree_rows)
         }
-        else{
-            gaps_row = NULL
-        }
     }
     else{
         tree_row = NA
@@ -974,9 +970,6 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         labels_col = labels_col[tree_col$order]
         if(!is.na(cutree_cols)){
             gaps_col = find_gaps(tree_col, cutree_cols)
-        }
-        else{
-            gaps_col = NULL
         }
     }
     else{
