@@ -923,7 +923,7 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         }
         
         display_numbers = as.matrix(display_numbers)
-        fmat = matrix(as.character(display_numbers), nrow = nrow(display_numbers), ncol = ncol(display_numbers))
+        fmat = matrix(sprintf(number_format, display_numbers), nrow = nrow(display_numbers), ncol = ncol(display_numbers))
         fmat_draw = TRUE
         
     }
