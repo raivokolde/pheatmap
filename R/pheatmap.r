@@ -272,8 +272,13 @@ convert_annotations = function(annotation, annotation_colors){
             new[, i] = b[a]
         }
         else{
-            a = cut(a, breaks = 100)
-            new[, i] = colorRampPalette(b)(100)[a]
+            if(all(is.na(a))){
+                new[, i] = rep(NA, length(a))
+            }
+            else {
+                a = cut(a, breaks = 100)
+                new[, i] = colorRampPalette(b)(100)[a]
+            }
         }
     }
     return(as.matrix(new))
@@ -335,6 +340,11 @@ draw_annotation_legend = function(annotation, annotation_colors, border_color, .
     
     res = gList()
     for(i in names(annotation)){
+        
+        if(all(is.na(annotation[[i]]))){ # skip label for elements with only missing values
+            next()
+        }
+      
         res[[i]] = textGrob(i, x = 0, y = y, vjust = 1, hjust = 0, gp = gpar(fontface = "bold", ...))
         
         y = y - 1.5 * text_height
