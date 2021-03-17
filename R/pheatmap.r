@@ -405,7 +405,7 @@ heatmap_motor = function(matrix, border_color, cellwidth, cellheight, tree_col, 
             jpg = function(x, ...) jpeg(x, units = "in", res = 300, ...),
             tiff = function(x, ...) tiff(x, units = "in", res = 300, compression = "lzw", ...),
             bmp = function(x, ...) bmp(x, units = "in", res = 300, ...),
-            stop("File type should be: pdf, png, bmp, jpg, tiff")
+            stop("File type should be either of: pdf, png, bmp, jpg, tiff")
         )
         
         # print(sprintf("height:%f width:%f", height, width))
@@ -537,7 +537,7 @@ cluster_mat = function(mat, distance, method){
         stop("clustering method has to one form the list: 'ward', 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
     }
     if(!(distance[1] %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) & class(distance) != "dist"){
-        stop("distance has to be a dissimilarity structure as produced by dist or one measure  form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
+        stop("distance has to be a dissimilarity structure as produced by dist or one measure form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
     }
     if(distance[1] == "correlation"){
         d = as.dist(1 - cor(t(mat)))
@@ -562,7 +562,7 @@ scale_rows = function(x){
 
 scale_mat = function(mat, scale){
     if(!(scale %in% c("none", "row", "column"))){
-        stop("scale argument shoud take values: 'none', 'row' or 'column'")
+        stop("scale argument should take values: 'none', 'row' or 'column'")
     }
     mat = switch(scale, none = mat, row = scale_rows(mat), column = t(scale_rows(t(mat))))
     return(mat)
