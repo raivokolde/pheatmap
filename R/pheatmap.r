@@ -279,7 +279,7 @@ convert_annotations = function(annotation, annotation_colors){
     return(as.matrix(new))
 }
 
-draw_annotations = function(converted_annotations, border_color, gaps, fontsize, horizontal){
+draw_annotations = function(converted_annotations, border_color, gaps, fontsize, horizontal, annotation_scale){
     n = ncol(converted_annotations)
     m = nrow(converted_annotations)
     
