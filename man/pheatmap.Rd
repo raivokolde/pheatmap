@@ -115,7 +115,7 @@ tracks should be drawn.}
 \item{drop_levels}{logical to determine if unused levels are also shown in 
 the legend}
 
-\item{show_rownames}{boolean specifying if column names are be shown.}
+\item{show_rownames}{boolean specifying if row names are be shown.}
 
 \item{show_colnames}{boolean specifying if column names are be shown.}
 
