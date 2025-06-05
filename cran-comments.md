@@ -1,3 +1,3 @@
 # Comments
 
-* I introduced two small features and none of which should change any default behaviours.
+* I fixed the NOTEs coming up on running check command

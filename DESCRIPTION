@@ -1,10 +1,12 @@
 Package: pheatmap
 Type: Package
 Title: Pretty Heatmaps
-Version: 1.0.12
-Date: 2018-12-26
-Author: Raivo Kolde
-Maintainer: Raivo Kolde <rkolde@gmail.com>
+Version: 1.0.13
+Date: 2025-06-05
+Authors@R: person(given = "Raivo",
+                  family = "Kolde",
+                  role = c("aut", "cre"),
+                  email = "rkolde@gmail.com")
 Depends:
     R (>= 2.0)
 Description: Implementation of heatmaps that offers more control
@@ -18,5 +20,6 @@ Imports:
     grDevices,
     graphics
 License: GPL-2
+Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 6.0.1
+RoxygenNote: 7.3.2

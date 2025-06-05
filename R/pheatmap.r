@@ -536,14 +536,14 @@ cluster_mat = function(mat, distance, method){
     if(!(method %in% c("ward.D", "ward.D2", "ward", "single", "complete", "average", "mcquitty", "median", "centroid"))){
         stop("clustering method has to one form the list: 'ward', 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
     }
-    if(!(distance[1] %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) & class(distance) != "dist"){
+    if(!(distance[1] %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) & !(inherits(distance, "dist"))){
         stop("distance has to be a dissimilarity structure as produced by dist or one measure  form the list: 'correlation', 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski'")
     }
     if(distance[1] == "correlation"){
         d = as.dist(1 - cor(t(mat)))
     }
     else{
-        if(class(distance) == "dist"){
+        if(inherits(distance, "dist")){
             d = distance
         }
         else{
@@ -782,7 +782,7 @@ identity2 = function(x, ...){
 #'     \item \code{tree_col} the clustering of columns as \code{\link{hclust}} object
 #'     \item \code{kmeans} the kmeans clustering of rows if parameter \code{kmeans_k} was 
 #' specified 
-#'     \item \code{gtable} a \code{\link{gtable}} object containing the heatmap, 
+#'     \item \code{gtable} a \code{\link[gtable]{gtable}} object containing the heatmap, 
 #'     can be used for combining the heatmap with other plots 
 #' }
 #' 
@@ -806,14 +806,14 @@ identity2 = function(x, ...){
 #' 
 #' # Show text within cells
 #' pheatmap(test, display_numbers = TRUE)
-#' pheatmap(test, display_numbers = TRUE, number_format = "\%.1e")
+#' pheatmap(test, display_numbers = TRUE, number_format = "%.1e")
 #' pheatmap(test, display_numbers = matrix(ifelse(test > 5, "*", ""), nrow(test)))
 #' pheatmap(test, cluster_row = FALSE, legend_breaks = -1:4, legend_labels = c("0",
 #' "1e-4", "1e-3", "1e-2", "1e-1", "1"))
 #' 
 #' # Fix cell sizes and save to file with correct size
 #' pheatmap(test, cellwidth = 15, cellheight = 12, main = "Example heatmap")
-#' pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
+#' # pheatmap(test, cellwidth = 15, cellheight = 12, fontsize = 8, filename = "test.pdf")
 #' 
 #' # Generate annotations for rows and columns
 #' annotation_col = data.frame(
@@ -882,7 +882,7 @@ identity2 = function(x, ...){
 #' }
 #' 
 #' @export
-pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse((class(cluster_rows) == "hclust") || cluster_rows, 50, 0), treeheight_col = ifelse((class(cluster_cols) == "hclust") || cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, annotation_names_row = TRUE, annotation_names_col = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, angle_col = c("270", "0", "45", "90", "315"), display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, na_col = "#DDDDDD", ...){
+pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100), kmeans_k = NA, breaks = NA, border_color = "grey60", cellwidth = NA, cellheight = NA, scale = "none", cluster_rows = TRUE, cluster_cols = TRUE, clustering_distance_rows = "euclidean", clustering_distance_cols = "euclidean", clustering_method = "complete", clustering_callback = identity2, cutree_rows = NA, cutree_cols = NA,  treeheight_row = ifelse((inherits(cluster_rows, "hclust")) || cluster_rows, 50, 0), treeheight_col = ifelse((inherits(cluster_cols, "hclust")) || cluster_cols, 50, 0), legend = TRUE, legend_breaks = NA, legend_labels = NA, annotation_row = NA, annotation_col = NA, annotation = NA, annotation_colors = NA, annotation_legend = TRUE, annotation_names_row = TRUE, annotation_names_col = TRUE, drop_levels = TRUE, show_rownames = T, show_colnames = T, main = NA, fontsize = 10, fontsize_row = fontsize, fontsize_col = fontsize, angle_col = c("270", "0", "45", "90", "315"), display_numbers = F, number_format = "%.2f", number_color = "grey30", fontsize_number = 0.8 * fontsize, gaps_row = NULL, gaps_col = NULL, labels_row = NULL, labels_col = NULL, filename = NA, width = NA, height = NA, silent = FALSE, na_col = "#DDDDDD", ...){
     
     # Set labels
     if(is.null(labels_row)){
@@ -939,8 +939,8 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
     }
     
     # Do clustering
-    if((class(cluster_rows) == "hclust") || cluster_rows){
-        if(class(cluster_rows) == "hclust"){
+    if((inherits(cluster_rows, "hclust")) || cluster_rows){
+        if(inherits(cluster_rows, "hclust")){
             tree_row = cluster_rows
         } else {
             tree_row = cluster_mat(mat, distance = clustering_distance_rows, method = clustering_method)
@@ -961,8 +961,8 @@ pheatmap = function(mat, color = colorRampPalette(rev(brewer.pal(n = 7, name = "
         treeheight_row = 0
     }
     
-    if((class(cluster_cols) == "hclust") || cluster_cols){
-        if(class(cluster_cols) == "hclust"){
+    if((inherits(cluster_cols, "hclust")) || cluster_cols){
+        if(inherits(cluster_cols, "hclust")){
             tree_col = cluster_cols
         } else {
             tree_col = cluster_mat(t(mat), distance = clustering_distance_cols, method = clustering_method)

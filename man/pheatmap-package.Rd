@@ -8,3 +8,8 @@
 Implementation of heatmaps that offers more control
 over dimensions and appearance.
 }
+\author{
+\strong{Maintainer}: Raivo Kolde \email{rkolde@gmail.com}
+
+}
+\keyword{internal}

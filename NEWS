@@ -1,3 +1,7 @@
+Version 1.0.13
+-------------------------------------------------------------------------------
+* Trying to comply with CRAN policies
+
 Version 1.0.12
 -------------------------------------------------------------------------------
 * New option angle_col that allows to change the orientation of column labels
@@ -28,32 +32,32 @@ Introduced changes by Tauno Metsalu:
 
 Version 1.0.7
 -------------------------------------------------------------------------------
-Trying to comply with CRAN policies
+* Trying to comply with CRAN policies
 
 Version 1.0.6
 -------------------------------------------------------------------------------
-Added clustering_callback option to give more control over the hierarchical 
+* Added clustering_callback option to give more control over the hierarchical 
 clustering
 
 Version 1.0.5
 -------------------------------------------------------------------------------
-Fixed the continuous legend bug
+* Fixed the continuous legend bug
 
 Version 1.0.4
 -------------------------------------------------------------------------------
-Make the NA handling in parameters more intelligent
+* Make the NA handling in parameters more intelligent
 
 Version 1.0.3
 -------------------------------------------------------------------------------
-Make the NA handling more intelligent for annotations
+* Make the NA handling more intelligent for annotations
 
 Version 1.0.2
 -------------------------------------------------------------------------------
-Trying to comply with CRAN policies
+* Trying to comply with CRAN policies
 
 Version 1.0.1
 -------------------------------------------------------------------------------
-Fixed small bug with gap calculation
+* Fixed small bug with gap calculation
 
 Version 1.0.0
 -------------------------------------------------------------------------------
@@ -62,51 +66,51 @@ Major rewrite of pheatmap.
 * Internally pheatmap uses now gtable package and returns the gtable object that
  gives more flexibility in editing the figure or combining it with other plots
 * Introduced the opportunity to separate parts of heatmap using gaps. This can 
-be achieved using gaps_col and gaps_row parameter when the corresponding 
-dimension is not clustered. Alternatively cutree_row and cutree_col introduce 
-the gaps based on the clustering.
-* Now it is possible to annotate rows of heatmaps in similar manner as it was 
-possible with columns before.
+ be achieved using gaps_col and gaps_row parameter when the corresponding
+ dimension is not clustered. Alternatively cutree_row and cutree_col introduce
+ the gaps based on the clustering.
+* Now it is possible to annotate rows of heatmaps in similar manner as it was
+ possible with columns before.
 * Now it is possible to supply custom labels for rows and columns. 
 * Added names to annotation tracks
-* Improved the overall appearance of the plot, concentrating on legends and 
-annotation color schemes
+* Improved the overall appearance of the plot, concentrating on legends and
+ annotation color schemes
 
 Version 0.7.10
 -------------------------------------------------------------------------------
-Can set color to the values shown inside the cells. 
+* Can set color to the values shown inside the cells. 
 
 Version 0.7.9
 -------------------------------------------------------------------------------
-Added option to show arbitrary values within cells, by giving a matrix to 
+* Added option to show arbitrary values within cells, by giving a matrix to 
 display_numbers parameter.
 
 Version 0.7.8
 -------------------------------------------------------------------------------
-Made the dendrogram drawing faster
+* Made the dendrogram drawing faster
 
 Version 0.7.7
 -------------------------------------------------------------------------------
-Fixed a bug related to calculating space for the column and row names. Made the
+* Fixed a bug related to calculating space for the column and row names. Made the
 documentation more readable
 
-Added .Rbuildignore
+* Added .Rbuildignore
 
 Version 0.7.6
 -------------------------------------------------------------------------------
-Fixed a bug, where the color scales for scaled matrices were not centered to 0.
+* Fixed a bug, where the color scales for scaled matrices were not centered to 0.
 
 Version 0.7.5
 -------------------------------------------------------------------------------
-Minor bug fix
+* Minor bug fix
 
 Version 0.7.4
 -------------------------------------------------------------------------------
-Minor bug fixes
+* Minor bug fixes
 
 Version 0.7.2 and 0.7.3
 -------------------------------------------------------------------------------
-Fixed some bugs introduced by changing the direction of plotting the y axis
+* Fixed some bugs introduced by changing the direction of plotting the y axis
 
 
 Version 0.7.1

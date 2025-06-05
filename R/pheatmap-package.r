@@ -4,7 +4,6 @@
 #' over dimensions and appearance.
 #' 
 #' @name pheatmap-package
-#' @docType package
 #' 
 #' @import grid
 #' @import RColorBrewer
@@ -14,5 +13,5 @@
 #' @import grDevices
 #' @import graphics
 #' 
-#' 
-NA
+#' @keywords internal 
+"_PACKAGE"
