@@ -742,7 +742,7 @@ identity2 = function(x, ...){
 #' tracks should be drawn. 
 #' @param drop_levels logical to determine if unused levels are also shown in 
 #' the legend
-#' @param show_rownames boolean specifying if column names are be shown.
+#' @param show_rownames boolean specifying if row names are be shown.
 #' @param show_colnames boolean specifying if column names are be shown.
 #' @param main the title of the plot
 #' @param fontsize base fontsize for the plot 
