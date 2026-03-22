@@ -1111,5 +1111,6 @@ grid.draw.pheatmap <- function(x, recording = TRUE) {
 #' @method print pheatmap
 #' @export
 print.pheatmap <- function(x, ...) {
+    grid.newpage()
     grid.draw(x)
 }
